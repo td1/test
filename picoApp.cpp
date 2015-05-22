@@ -3,81 +3,76 @@
 //          add compiler switch for td3 and td4 
 //          add fadeDown flag
 //          remove redundant code in setup 
-//
-//
-//
+// 05.22.15 TD1W code cleaning and compile
+//          change both indent/tab to 4 and spaces
 //
 
 #include "picoApp.h"
-//--------------------------------------------------------------
+
 void picoApp::setup()
 {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetLogLevel("ofThread", OF_LOG_ERROR);
 	doSaveImage = false;
 	doUpdatePixels = true;
-        startPlayVideo = false;
-
-// HUNG WORKING and HUNG TODO        
-// Need to remove here and add into picoApp.h for each td
-// #define TD1 
-        
-// #define SKIP_SYNC_FOR_TEST 
-#define NUMBER_OF_QRCODE 8        
-        
-#define GET_HOMOGRAPHY_TEST
+    startPlayVideo = false;
         
 #ifdef TD1        
-        string videoPath = ofToDataPath("./bunny1.mp4", true);
-	boardID = 1;
-        fadeRight = 1;
-        fadeDown = 0;
-#elsif TD2 
-        // string videoPath = ofToDataPath("./UDg94XukY0Q", true);
-        string videoPath = ofToDataPath("./bunny2.mp4", true);
-        boardID = 2;
-        fadeRight = 0;
-        fadeDown = 0;
-#elsif TD3 
-        string videoPath = ofToDataPath("./bunny3.mp4", true);
-        boardID = 3;
-        fadeRight = 0;
-        fadeDown = 1;
-#elsif TD4 
-        string videoPath = ofToDataPath("./bunny4.mp4", true);
-        boardID = 4;
-        fadeRight = 0;
-        fadeDown = 1;
+    string videoPath = ofToDataPath("./bunny1.mp4", true);
+	boardID = ID_TD1;
+    fadeRight = true;
+    fadeDown = false;
+#elif  TD2 
+    string videoPath = ofToDataPath("./bunny2.mp4", true);
+    boardID = ID_TD2;
+    fadeRight = false;
+    fadeDown = true;
+#elif  TD3 
+    string videoPath = ofToDataPath("./bunny3.mp4", true);
+    boardID = ID_TD3;
+    fadeRight = false;
+    fadeDown = true;
+#elif  TD4 
+    string videoPath = ofToDataPath("./bunny4.mp4", true);
+    boardID = ID_TD4;
+    fadeRight = false;
+    fadeDown = true;
+#elif  TD1W
+    string videoPath = ofToDataPath("./bunny1.mp4", true);
+	boardID = ID_TD1W;
+    fadeRight = true;
+    fadeDown = false;
 #endif
         
-        getHomography(boardID);
-       
-        // HUNG SCALING ISSUE HERE 
-        if (boardID == 1) // REF
-            sprintf(matrixFN, "unity.txt");
-        else
-            // sprintf(matrixFN, "o2h2invh1.txt");
-            sprintf(matrixFN, "o2h1invh2.txt");
-        readMatrix2(matrixFN);
-        
-#if GET_MATLAB_MATRIX_FILES        
-        // read matrix file
-        sprintf(matrixFN, "matrix%d.txt", boardID);
-        readMatrix(matrixFN);
-        calFading();
-#endif
-        
-        syncVideo(boardID);
-	consoleListener.setup(this);
-        ofSetFrameRate(30);
+    getHomography(boardID);
+      
+	switch (boardID) {
+        case ID_TD1:
+            sprintf(matrixFN, "unity.txt"); 
+            break;
+        case ID_TD2:
+            sprintf(matrixFN, "o2h1invh2.txt"); 
+            break;
+        case ID_TD3:
+        case ID_TD4:
+        case ID_TD1W:
+        default:
+            sprintf(matrixFN, "unity.txt"); 
+    }
+    readMatrix2(matrixFN);
 
-        startPlayVideo = true;
-	omxPlayer.loadMovie(videoPath); // WE NEED TO CHECK IF VIDEO IS NOT READY YET
+    syncVideo(boardID);
+	consoleListener.setup(this);
+    ofSetFrameRate(30);
+
+    startPlayVideo = true;
+	omxPlayer.loadMovie(videoPath); 
 	width = omxPlayer.getWidth();
-        height = omxPlayer.getHeight();
-        if (width != WIDTH || height != HEIGHT) {
-            printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
-        }
+    height = omxPlayer.getHeight();
+    if (width != WIDTH || height != HEIGHT) {
+        printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -86,19 +81,16 @@ void picoApp::update()
     if (doSaveImage ) {
         doSaveImage = false;
         // ofLogVerbose() << " saving image... ";
-	omxPlayer.saveImage();
+        omxPlayer.saveImage();
     }
     
     if (doUpdatePixels) {
-	//since updatePixels() is expensive it is not automatically called in the player		
-	omxPlayer.updatePixels();
-                
-	if (!pixelOutput.isAllocated()) {
+    	omxPlayer.updatePixels();
+        if (!pixelOutput.isAllocated()) {
             pixelOutput.allocate(width, height, GL_RGBA);
-	}
+        }
     }
 }
-
 
 //--------------------------------------------------------------
 void picoApp::draw(){
@@ -107,81 +99,18 @@ void picoApp::draw(){
     int var1, var2, nChannels;
     // HUNG1015 double w,xfade,yfade;
 
-    if(!omxPlayer.isTextureEnabled)
-    {
-            ofLogVerbose() << " texture is not enabled ";
-            return;
+    if(!omxPlayer.isTextureEnabled) {
+        ofLogVerbose() << " texture is not enabled ";
+        return;
     }
 
     // optional to display the original video
     // printf("DRAW RESOLUTION = %d x %d\n", ofGetWidth(), ofGetHeight());
     // omxPlayer.draw(0, 0, ofGetWidth(), ofGetHeight());
 
-
-    ////////////////////////////////////////////////////////
-    /* START playing with pixels */
-
     unsigned char *pixels = omxPlayer.getPixels();
     nChannels = 4; // omxPlayer.getPixelsRef().getNumChannels();
       
-//#define SPLIT
-#define HOMOGRAPHY_FUNCTION
-
-// old way to calculation blending
-#ifdef BLEND1
-    for (i=0; i<height; i++) {             
-        for (j=0; j<width; j++) {    
-            w = matrix[2][0] * j + matrix[2][1] * i + matrix[2][2];
-            x = (int)((matrix[0][0] * j + matrix[0][1] * i + matrix[0][2])/w);
-            y = (int)((matrix[1][0] * j + matrix[1][1] * i + matrix[1][2])/w);
-            yfade = 1.0;
-            // printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
-
-            if ((j >= getLeftX(i) && j <= getRightX(i))) 
-                xfade = getXFade(j,i);
-            else xfade = 1.0;
-            // printf("fade %lf\n", xfade);
-
-            for (k=0; k<3; k++) {
-                if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT) {
-                    pixels[(y*WIDTH + x)*nChannels+k] = pixels[(y*WIDTH + x)*nChannels+k]*xfade*yfade;
-                }
-            }
-        }        
-
-    }
-#endif
-
-#ifdef BLEND2
-// char cmd[10];
-// sprintf(cmd, "times");
-// system(cmd);
-
-yfade = 1.0;
-xfade = 1.0;
-
-for (i=0; i<height; i++) {             
-   for (j=0; j<width; j++) {    
-       w = matrix[2][0] * j + matrix[2][1] * i + matrix[2][2];
-       x = (int)((matrix[0][0] * j + matrix[0][1] * i + matrix[0][2])/w);
-       y = (int)((matrix[1][0] * j + matrix[1][1] * i + matrix[1][2])/w);
-       // printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
-
-       if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT) {
-           if ((j >= getLeftX(i) && j <= getRightX(i))) {
-               xfade = getXFade(j,i);
-               var1 = (y*WIDTH + x)*nChannels;
-               for (k=0; k<3; k++) {
-                   pixels[var1+k] = pixels[var1+k]*xfade;
-               }
-           }
-       }
-   }        
-}
-// system(cmd);
-#endif
-
-#ifdef SPLIT
     // calculate fading factors
     if ((boardID % 2) == 0) { // boardID = 2,4
         for (i=0; i<height; i++) {             
@@ -205,9 +134,8 @@ for (i=0; i<height; i++) {
             }        
         }
     }
-#endif 
 
-#ifdef HOMOGRAPHY_FUNCTION
+#if true 
     pixelOutput.loadData(pixels, width, height, GL_RGBA);
     glPushMatrix();
     glMultMatrixf(myMatrix);
@@ -216,18 +144,15 @@ for (i=0; i<height; i++) {
     glPopMatrix();
 #else
     pixelOutput.loadData(pixels, width, height, GL_RGBA);
-    /////////////////////////////////////////////////////////
-    /* STOP playing with pixels */
     pixelOutput.draw(0, 0, omxPlayer.getWidth(), omxPlayer.getHeight());
 #endif
 
+#if false
     stringstream info;
     info <<"\n" << "p=Pause,f=Play,s=Save" << doUpdatePixels << startPlayVideo << doSaveImage;
-
-#if 1 // turn on option display info	
     ofDrawBitmapStringHighlight(omxPlayer.getInfo() + info.str(), 60, 60, ofColor(ofColor::black, 90), ofColor::yellow);
 #endif
-
+    
 }
 
 //--------------------------------------------------------------
@@ -462,7 +387,7 @@ double picoApp::getXFade(int x, int y)
     double x1,x2,result;
     double result2,gamma;
 
-    if(fadeRight)	// Projector 1, 3
+    if (fadeRight)	// Projector 1, 3
     {
         x2 = getRightX(y)-x;
         x1 = x - getLeftX(y);
