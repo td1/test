@@ -2,7 +2,7 @@
 // 05.21.15 move TD definition to local file 
 //          add compiler switch for td3 and td4 
 //          add fadeDown flag
-// 
+//          remove redundant code in setup 
 //
 //
 //
@@ -50,37 +50,15 @@ void picoApp::setup()
         fadeDown = 1;
 #endif
         
-#ifdef GET_HOMOGRAPHY_TEST
         getHomography(boardID);
-        
-        while (0) {
-            printf ("done getHomography, take a break here\n");
-            
-            /*
-            printf("h2inv = ");
-            for (i=1; i<=NCOL; i++) {
-                h2inv[i] = h[i];
-                printf("%lf ", h2inv[i]);
-            }
-            printf("\n");
-            */
-            
-            sprintf(matrixFN, "h%dinv.txt", boardID);
-            readMatrix2(matrixFN);
-            // sleep(10);
-        }
-        
-        // sprintf(matrixFN, "h%dinv.txt", boardID);
-        // sprintf(matrixFN, "h2inv.txt");
-        
+       
+        // HUNG SCALING ISSUE HERE 
         if (boardID == 1) // REF
             sprintf(matrixFN, "unity.txt");
         else
             // sprintf(matrixFN, "o2h2invh1.txt");
             sprintf(matrixFN, "o2h1invh2.txt");
         readMatrix2(matrixFN);
-        
-#endif
         
 #if GET_MATLAB_MATRIX_FILES        
         // read matrix file
@@ -89,19 +67,10 @@ void picoApp::setup()
         calFading();
 #endif
         
-
-
-        
-#ifndef SKIP_SYNC_FOR_TEST   
         syncVideo(boardID);
-#endif 
 	consoleListener.setup(this);
-        
-#if 1
         ofSetFrameRate(30);
-#endif        
 
-#if 1
         startPlayVideo = true;
 	omxPlayer.loadMovie(videoPath); // WE NEED TO CHECK IF VIDEO IS NOT READY YET
 	width = omxPlayer.getWidth();
@@ -109,8 +78,6 @@ void picoApp::setup()
         if (width != WIDTH || height != HEIGHT) {
             printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
         }
-#endif
-        
 }
 
 //--------------------------------------------------------------
