@@ -1,5 +1,14 @@
-#include "picoApp.h"
+//--------------------------------------------------------------
+// 05.21.15 move TD definition to local file 
+//          add compiler switch for td3 and td4 
+//          add fadeDown flag
+// 
+//
+//
+//
+//
 
+#include "picoApp.h"
 //--------------------------------------------------------------
 void picoApp::setup()
 {
@@ -10,7 +19,8 @@ void picoApp::setup()
         startPlayVideo = false;
 
 // HUNG WORKING and HUNG TODO        
-#define TD1 
+// Need to remove here and add into picoApp.h for each td
+// #define TD1 
         
 // #define SKIP_SYNC_FOR_TEST 
 #define NUMBER_OF_QRCODE 8        
@@ -18,17 +28,26 @@ void picoApp::setup()
 #define GET_HOMOGRAPHY_TEST
         
 #ifdef TD1        
-	// string videoPath = ofToDataPath("../../../video/Timecoded_Big_bunny_1.mov", true);
-        // string videoPath = ofToDataPath("../../../video/set1_bigbunny.mov", true);
-        // string videoPath = ofToDataPath("./_1G5HN6O5l0", true);
         string videoPath = ofToDataPath("./bunny1.mp4", true);
 	boardID = 1;
         fadeRight = 1;
-#else // TD2
+        fadeDown = 0;
+#elsif TD2 
         // string videoPath = ofToDataPath("./UDg94XukY0Q", true);
         string videoPath = ofToDataPath("./bunny2.mp4", true);
         boardID = 2;
         fadeRight = 0;
+        fadeDown = 0;
+#elsif TD3 
+        string videoPath = ofToDataPath("./bunny3.mp4", true);
+        boardID = 3;
+        fadeRight = 0;
+        fadeDown = 1;
+#elsif TD4 
+        string videoPath = ofToDataPath("./bunny4.mp4", true);
+        boardID = 4;
+        fadeRight = 0;
+        fadeDown = 1;
 #endif
         
 #ifdef GET_HOMOGRAPHY_TEST
