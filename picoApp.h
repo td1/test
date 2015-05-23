@@ -29,7 +29,7 @@ extern "C" {
 #define ID_TD4              4
 #define ID_TD1W             5
 
-#define TD1         
+#define TD2                 TRUE
 #define NUMBER_OF_QRCODE    8
 
 #define MAX_FRAMES          99

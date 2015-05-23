@@ -22,22 +22,22 @@ void picoApp::setup()
 	boardID = ID_TD1;
     fadeRight = true;
     fadeDown = false;
-#elif  TD2 
+#elif TD2 
     string videoPath = ofToDataPath("./bunny2.mp4", true);
     boardID = ID_TD2;
     fadeRight = false;
     fadeDown = true;
-#elif  TD3 
+#elif TD3 
     string videoPath = ofToDataPath("./bunny3.mp4", true);
     boardID = ID_TD3;
     fadeRight = false;
     fadeDown = true;
-#elif  TD4 
+#elif TD4 
     string videoPath = ofToDataPath("./bunny4.mp4", true);
     boardID = ID_TD4;
     fadeRight = false;
     fadeDown = true;
-#elif  TD1W
+#else 
     string videoPath = ofToDataPath("./bunny1.mp4", true);
 	boardID = ID_TD1W;
     fadeRight = true;
