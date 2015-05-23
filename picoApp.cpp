@@ -135,7 +135,7 @@ void picoApp::draw(){
         }
     }
 
-#if true 
+#if 1 
     pixelOutput.loadData(pixels, width, height, GL_RGBA);
     glPushMatrix();
     glMultMatrixf(myMatrix);
