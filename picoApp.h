@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxOMXPlayer.h"
-
+#include "myID.h"
 #include "ConsoleListener.h"
 
 extern "C" {
@@ -18,7 +18,6 @@ extern "C" {
 #include <pthread.h>
 #include <sys/ioctl.h>
     
-    
 #include "fb.h"
 
 }
@@ -29,7 +28,6 @@ extern "C" {
 #define ID_TD4              4
 #define ID_TD1W             5
 
-#define TD2                 TRUE
 #define NUMBER_OF_QRCODE    8
 
 #define MAX_FRAMES          99
