@@ -95,15 +95,13 @@ void picoApp::update()
 //--------------------------------------------------------------
 void picoApp::draw(){
     int i,j,k;
-    // HUNG1015 int x,y;
     int var1, var2, nChannels;
-    // HUNG1015 double w,xfade,yfade;
 
-    if(!omxPlayer.isTextureEnabled) {
-        ofLogVerbose() << " texture is not enabled ";
-        return;
-    }
-
+    //if(!omxPlayer.isTextureEnabled) {
+    //    ofLogVerbose() << " texture is not enabled ";
+    //    return;
+    // }
+    
     // optional to display the original video
     // printf("DRAW RESOLUTION = %d x %d\n", ofGetWidth(), ofGetHeight());
     // omxPlayer.draw(0, 0, ofGetWidth(), ofGetHeight());
@@ -781,16 +779,18 @@ void *screenCapture(void* ptrData)
             }
         }
         
+#if 0
         printf("qrcorner= ");
         for (i=0; i<MAX_QR; i++)
             for (j=0; j<10; j++)
                 printf("%d ", qrcorner[i][j]);
+#endif
         
         // count number of projector based on at least one good QR detected for each pico set
         for (i=0; i<MAX_QR; i++)
             if (qrcorner[i][0] > 0) numQR++;
                 
-        printf("Number of QR code detected: %d", numQR);
+        printf("#QRs: %d \n", numQR);
         
         if (numQR >= NUMBER_OF_QRCODE) {
             doneCaptureQR = true;
