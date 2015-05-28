@@ -1640,10 +1640,11 @@ int picoApp::getHomography(int BoardID)
                     red = *pixel_ptr++;
                     green = *pixel_ptr++;
                     blue = *pixel_ptr++;
-                    
-                    red /= 3;
-                    green /= 3;
-                    blue /= 3;
+                   
+                    // remove brightness reduction 
+                    // red /= 3;
+                    // green /= 3;
+                    // blue /= 3;
                     
                     location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
                                 (y+vinfo.yoffset) * finfo.line_length;
@@ -1847,10 +1848,11 @@ int picoApp::syncVideo(int BoardID)
                         red = *pixel_ptr++;
                         green = *pixel_ptr++;
                         blue = *pixel_ptr++;
-                        
-                        red /= 3;
-                        green /= 3;
-                        blue /= 3;
+                       
+                        // remove brightness reduction 
+                        // red /= 3;
+                        // green /= 3;
+                        // blue /= 3;
                         
                         location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
                                     (y+vinfo.yoffset) * finfo.line_length;
