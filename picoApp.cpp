@@ -5,7 +5,7 @@
 //          remove redundant code in setup 
 // 05.22.15 TD1W code cleaning and compile
 //          change both indent/tab to 4 and spaces
-//
+// 05.27.15 check generated bar codes
 
 #include "picoApp.h"
 
@@ -1519,10 +1519,8 @@ int picoApp::getHomography(int BoardID)
     const char *fifoname = "/tmp/test.fifo";
 
     unsigned char red, green, blue, tookShot = 0;
-    // unsigned char *video_frame = (unsigned char*)malloc(640*480*3);
     unsigned char *video_frame; 
     unsigned char *pixel_ptr;
-    
     video_frame = (unsigned char*)malloc(640*480*3);
 
     // HUNG mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -1579,7 +1577,7 @@ int picoApp::getHomography(int BoardID)
         printf("Error: failed to map framebuffer device to memory.\n");
         return 0;
     }
-    printf("The framebuffer device was mapped to memory successfully.\n");
+    // printf("The framebuffer device was mapped to memory successfully.\n");
 
     gettimeofday(&tv, NULL);
     prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
@@ -1625,7 +1623,8 @@ int picoApp::getHomography(int BoardID)
             }
 
             // sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", numBars + thdata2.myID * 100);
-            sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", (numBars%2)+98 + thdata2.myID * 100);
+            sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", (numBars%2) + 98 + thdata2.myID * 100);
+            // printf("sending QR#%d\n", (numBars%2) + 98 + thdata2.myID * 100);
             
             fp = fopen(fileToOpen, "r");
             fread(video_frame, 1, 640*480*3, fp);
@@ -1633,7 +1632,6 @@ int picoApp::getHomography(int BoardID)
 
             // shifted positions for left and right QRs              
             if (numBars % 2 == 0) shift = -150;
-            // else if (numBars % 3 == 1) shift = 0;
             else shift = 150;
 
             // send a QR by updating pixels in the frame buffer
