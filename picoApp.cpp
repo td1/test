@@ -11,7 +11,7 @@
 
 void picoApp::setup()
 {
-	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_WARNING);
 	ofSetLogLevel("ofThread", OF_LOG_ERROR);
 	doSaveImage = false;
 	doUpdatePixels = true;
