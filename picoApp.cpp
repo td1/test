@@ -133,7 +133,7 @@ void picoApp::draw(){
         }
     }
 
-#if 1 
+#ifdef HOMOGRAPHY_TRANSFORM_ENABLE
     pixelOutput.loadData(pixels, width, height, GL_RGBA);
     glPushMatrix();
     glMultMatrixf(myMatrix);

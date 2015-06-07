@@ -22,6 +22,11 @@ extern "C" {
 
 }
 
+/* COMPILING SWITCH MODIFICATION */
+// define HOMOGRAPHY_TRANSFORM_ENABLE   1
+
+
+
 #define ID_TD1              1
 #define ID_TD2              2
 #define ID_TD3              3
