@@ -1,12 +1,3 @@
-//--------------------------------------------------------------
-// 05.21.15 move TD definition to local file 
-//          add compiler switch for td3 and td4 
-//          add fadeDown flag
-//          remove redundant code in setup 
-// 05.22.15 TD1W code cleaning and compile
-//          change both indent/tab to 4 and spaces
-// 05.27.15 check generated bar codes
-
 #include "picoApp.h"
 
 void picoApp::setup()
@@ -75,7 +66,6 @@ void picoApp::setup()
     
 }
 
-//--------------------------------------------------------------
 void picoApp::update()
 {
     if (doSaveImage ) {
@@ -92,7 +82,6 @@ void picoApp::update()
     }
 }
 
-//--------------------------------------------------------------
 void picoApp::draw(){
     int i,j,k;
     int var1, var2, nChannels;
@@ -153,7 +142,6 @@ void picoApp::draw(){
     
 }
 
-//--------------------------------------------------------------
 void picoApp::keyPressed  (int key)
 {
     if(key == 's')
@@ -177,7 +165,6 @@ void picoApp::onCharacterReceived(SSHKeyListenerEventData& e)
     keyPressed((int)e.character);
 }
 
-//--------------------------------------------------------------
 void picoApp::readMatrix2(char* filename)
 {
     FILE *matp;
@@ -213,7 +200,7 @@ void picoApp::readMatrix2(char* filename)
     for (i=0; i<16; i++)
         printf("%lf ", myMatrix[i]);
 
-#ifdef POSTPONE_BLENDING
+#ifdef ENABLE_BLENDING
     printf("htlx,htly,hblx,hbly,hbrx,hbry,htrx,htry : \n");
     if (!fscanf(matp, "%lf %lf %lf %lf %lf %lf %lf %lf", &htlx, &htly, &hblx, &hbly, &htrx, &htry, &hbrx, &hbry)) {
         fputs("Matrix file read error: 8 horizontal parameters\n", stderr);
@@ -226,10 +213,10 @@ void picoApp::readMatrix2(char* filename)
         return;
     }
 
-    // topSlope = (vtly-vtry)/(vtlx-vtrx);
-    topSlope = 0.0;
-    // bottomSlope = (vbly-vbry)/(vblx-vbrx);
-    bottomSlope = 0.0; 
+    topSlope = (vtly-vtry)/(vtlx-vtrx);
+    // topSlope = 0.0;
+    bottomSlope = (vbly-vbry)/(vblx-vbrx);
+    // bottomSlope = 0.0; 
     
     // prevent singularity
     if (htlx == hblx) {
@@ -443,8 +430,8 @@ double picoApp::getYFade(int x, int y)
     return (result >= 0 && result <= 1) ? result2 : 1;
 }
 
-double **dmatrix(int nrl, int nrh, int ncl, int nch)
 /* allocate a double matrix with subscript range m[nrl..nrh][ncl..nch] */
+double **dmatrix(int nrl, int nrh, int ncl, int nch)
 {
 	int i,nrow=nrh-nrl+1,ncol=nch-ncl+1;
 	double **m;
@@ -779,13 +766,7 @@ void *screenCapture(void* ptrData)
             }
         }
         
-#if 0
-        printf("qrcorner= ");
-        for (i=0; i<MAX_QR; i++)
-            for (j=0; j<10; j++)
-                printf("%d ", qrcorner[i][j]);
-#endif
-        
+   
         // count number of projector based on at least one good QR detected for each pico set
         for (i=0; i<MAX_QR; i++)
             if (qrcorner[i][0] > 0) numQR++;
@@ -794,6 +775,14 @@ void *screenCapture(void* ptrData)
         
         if (numQR >= NUMBER_OF_QRCODE) {
             doneCaptureQR = true;
+            
+            #ifdef DEBUG_HOMOGRAPHY
+                printf("qrcorner= ");
+                for (i=0; i<MAX_QR; i++)
+                    for (j=0; j<10; j++)
+                        printf("%d ", qrcorner[i][j]);
+            #endif
+
         }
     }
     
@@ -1765,7 +1754,7 @@ int picoApp::syncVideo(int BoardID)
     fbp = (char *)mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0); 
 
     if ((int)fbp == -1) {
-        printf("Error: failed to map framebuffer device to memory.\n");
+        printf("Error: failed to map frame buffer device to memory.\n");
         return 0;
     }
     printf("The framebuffer device was mapped to memory successfully.\n");
