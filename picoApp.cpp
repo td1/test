@@ -665,6 +665,7 @@ typedef struct s_thdata {
 
 #define MAX_QR  4 // Four QR sets
 
+/* screenCapture for getHomography function */
 void *screenCapture(void* ptrData)
 {
     FILE *fp;
@@ -1369,6 +1370,7 @@ void *screenCapture(void* ptrData)
     return tdata;
 }
 
+/* screenShot for syncVideo function */
 void *screenShot(void* ptrData)
 {
     FILE *fp;
@@ -1377,19 +1379,13 @@ void *screenShot(void* ptrData)
     int qrcode[MAX_QR];
     int min_counter = 999;
 
-    #if 0 // temporary local variable, these parameters are from pthread_create
-    // char myID = 1; 
-    // char shotAnalyzed = 0; // TEMPORARY, will pass from pthread_create
-    // char time2wait = 0;// TEMPORARY, will pass from pthread_create
-    #else
     thread_data *tdata; // pointer to thread_data
     tdata = (thread_data *)ptrData; // get passing pointer  
-    #endif 
 
     printf("screenShot start\n");   
 
     // not detect all displayed QRs yet (one per each pico set)
-    while (numProjector != 2)
+    while (numProjector != NUMBER_OF_QRCODE)
     {
         numProjector = 0;
         for (i=0; i<MAX_QR; i++) qrcode[i] = 0;
@@ -1442,17 +1438,11 @@ void *screenShot(void* ptrData)
         for (i=0; i<MAX_QR; i++)
             if (qrcode[i] > 0) numProjector++;
         
-        printf("Detected %d QR code: ", numProjector);
+        printf("syncVideo #QR = %d ", numProjector);
         for (i=0; i<MAX_QR; i++)
             // if (qrcode[i] > 0) 
             printf("%d ", qrcode[i]);
         printf("\n");
-        
-#ifdef SKIP_SYNC_FOR_TEST 
-      qrcode[0] = 5;
-      qrcode[1] = 15;
-      numProjector = 2;  
-#endif
     }
 
     // calculate lagging time for my projector
@@ -1765,7 +1755,7 @@ int picoApp::syncVideo(int BoardID)
     while (1)
     {
         if (startPlayVideo == true) {
-            printf("start play video = %d\n", startPlayVideo);
+            printf(">>>>>>>>>>>> start play video = %d\n", startPlayVideo);
             break;
         } 
 
@@ -1776,7 +1766,7 @@ int picoApp::syncVideo(int BoardID)
         gettimeofday(&tv, NULL);
         if ((double)tv.tv_sec + (0.000001 * tv.tv_usec) - prevBarTime < barRate)	continue; 
 
-        // Done detected two QRs, start wait time to sync
+        // done detected QRs, start wait time to sync
         if (thdata1.time2wait > 0 && thdata1.shotAnalyzed)
         {
             thdata1.time2wait--;
@@ -1853,14 +1843,14 @@ int picoApp::syncVideo(int BoardID)
             else { // wait=0, sync=1, start playing now                
                 printf("wait=%d, sync=%d, start playing video now...\n", thdata1.time2wait, synch);
                 startPlayVideo = true;
-                break;
+                // break; change break to next frame
             }
         } // end if time2wait == 0
 	 
         // synch = 1, wait to sync, sending one QR still, for another set detects QR
         if (thdata1.time2wait != 0 && synch == 1)
         {
-            sprintf(fileToOpen, "qrblob/QR%03d.rgb", 20 + thdata1.myID * 100);
+            sprintf(fileToOpen, "qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
             fp = fopen(fileToOpen, "r");
             fread(video_frame, 1, 640*480*3, fp);
             pixel_ptr = video_frame;
@@ -1892,24 +1882,18 @@ int picoApp::syncVideo(int BoardID)
         if (loopNum > WAIT_FOR_ALL_PICO_SENDING_QR && thdata1.time2wait == 0 && synch == 0)
         {
             // Take screenshots to analyze and sync
-#ifdef SKIP_SYNC_FOR_TEST 
-      printf("skip pthread screenshot\n");
-      thdata1.shotAnalyzed = 1;
-      break;
-#else
             if (tookShot == 0)
             {
                 // printf("creating screenShoot thread to capture\n");
                 pthread_create(&thread1, NULL, &screenShot, &thdata1);
                 tookShot = 1;
             }
-#endif
+
             if ((thdata1.time2wait == 0) && thdata1.shotAnalyzed) {
                 printf("SYNC DONE...shotAnalyzed=%d, time2wait=%d...\n", thdata1.shotAnalyzed, thdata1.time2wait);
                 synch = 1;
                 imageCounter = 0;
-                
-                // break; // just got sync here wait...// HUNG TEST TODO should we break here to fix long wait time after done waiting
+                // break; 
             }
             else {
                 // printf("FAILED, TAKE ANOTHER...shotAnalyzed=%d, time2wait=%d\n", thdata1.shotAnalyzed, thdata1.time2wait);
@@ -1932,9 +1916,7 @@ int picoApp::syncVideo(int BoardID)
         prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
     } // end while loop
 
-#ifndef SKIP_SYNC_FOR_TEST
     system("echo 'stop' > /tmp/test.fifo");
-#endif     
     pthread_join(thread1, NULL);
     munmap(fbp, screensize);
     close(fbfd);
