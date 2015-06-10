@@ -97,7 +97,8 @@ void picoApp::draw(){
 
     unsigned char *pixels = omxPlayer.getPixels();
     nChannels = 4; // omxPlayer.getPixelsRef().getNumChannels();
-      
+   
+#ifdef ENABLE_BLENDING    
     // calculate fading factors
     if ((boardID % 2) == 0) { // boardID = 2,4
         for (i=0; i<height; i++) {             
@@ -121,6 +122,7 @@ void picoApp::draw(){
             }        
         }
     }
+#endif
 
 #ifdef HOMOGRAPHY_TRANSFORM_ENABLE
     pixelOutput.loadData(pixels, width, height, GL_RGBA);
