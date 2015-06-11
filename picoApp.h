@@ -25,7 +25,7 @@ extern "C" {
 /* COMPILING SWITCH MODIFICATION */
 // #define HOMOGRAPHY_TRANSFORM_ENABLE   1
 // #define ENABLE_BLENDING     1
-#define DEBUG_HOMOGRAPHY    1
+// #define DEBUG_HOMOGRAPHY    1
 
 
 #define ID_TD1              1
