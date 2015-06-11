@@ -38,6 +38,9 @@ extern "C" {
                                 // syncVideo - screenShot two QRs code sequentially send, x01, x02...x99
                                 // 4 sets, total QRs = 8
 
+#define WAIT_AFTER_DONE_GET_HOMOGRAPHY  5
+#define MIN_FRAME_DELAY     20
+
 #define MAX_FRAMES          99
 #define BAR_WIDTH           5	// pixels
 #define BAR_HEIGHT          200	// pixels

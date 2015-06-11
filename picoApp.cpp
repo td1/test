@@ -34,7 +34,11 @@ void picoApp::setup()
     fadeRight = true;
     fadeDown = false;
 #endif
-        
+    
+#ifdef DEBUG_HOMOGRAPHY
+videoPath = ofToDataPath("./testpattern.mp4", true);
+#endif    
+    
     getHomography(boardID);
       
 	switch (boardID) {
@@ -1365,8 +1369,7 @@ void *screenCapture(void* ptrData)
     
     /* END OF HOMOGRAPHY CALCULATION HERE */
 
-     // HUNG WORKING NEW
-    tdata->time2wait = 5; // WAIT FOR ANOTHER CATCH UP
+    tdata->time2wait = WAIT_AFTER_DONE_GET_HOMOGRAPHY; // WAIT FOR ANOTHER CATCH UP
     
     tdata->shotAnalyzed = 1;
     return tdata;
@@ -1470,7 +1473,7 @@ void *screenShot(void* ptrData)
     else {
       tdata->time2wait = tempWait;
     }
-    printf("my ID:%d, time2wait: %d\n", tdata->myID, tempWait);   
+    printf(">>>>>>>> my ID:%d, time2wait: %d\n", tdata->myID, tempWait);   
     tdata->shotAnalyzed = 1;
     return tdata;
 }
@@ -1673,10 +1676,10 @@ int picoApp::syncVideo(int BoardID)
 
     int fbfd = 0;
     int loopNum = 0;
-    int synch = 0;
+    int sync = 0;
     int upperleft_x;
-    int synch_started=0;
     int numBars = -1;
+    int newtime2wait = 0;
 
     struct fb_var_screeninfo vinfo;
     struct fb_fix_screeninfo finfo;
@@ -1756,34 +1759,35 @@ int picoApp::syncVideo(int BoardID)
 
     while (1)
     {
+        /* STEP6: done syncVideo, playing video now */
         if (startPlayVideo == true) {
             printf(">>>>>>>>>>>> start play video = %d\n", startPlayVideo);
             break;
         } 
 
-        // after synchronous, start playing video with the frame rate = framePeriod
-        if (synch == 1 && (loopNum >= MAX_FRAMES)) barRate = framePeriod;
-
-        // STOP HERE UNTIL barRate
         gettimeofday(&tv, NULL);
         if ((double)tv.tv_sec + (0.000001 * tv.tv_usec) - prevBarTime < barRate)	continue; 
 
-        // done detected QRs, start wait time to sync
-        if (thdata1.time2wait > 0 && thdata1.shotAnalyzed)
+        /* STEP3: done detected QRs, start wait time to sync */
+        if (sync == 0 && thdata1.shotAnalyzed)
         {
-            thdata1.time2wait--;
-            synch_started = 1;
-            printf("wait time = %d\n", thdata1.time2wait);
-            prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
-            continue;
+            sync = 1; 
+            loopNum = MAX_FRAMES - MIN_FRAME_DELAY - thdata1.time2wait; 
+            newtime2wait = MAX_FRAMES - loopNum;
+            printf("time2wait = %d\n", newtime2wait);
         }
-
+        
+        /* STEP4: continue sending out event sync = 1 */
+        if (sync == 1) {
+            newtime2wait = MAX_FRAMES - loopNum;
+            printf("time2wait = %d\n", newtime2wait);
+        }
+        
         numBars++;
         loopNum++;
-        // printf("BAR%dLOOP%d ", numBars, loopNum);
 
         // clear screen
-        if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!synch)))
+        if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!sync)))
         {
             printf("clear screen at beginning\n");
             for (y=0; y<479; y++)
@@ -1796,123 +1800,65 @@ int picoApp::syncVideo(int BoardID)
             numBars = 1;
         }
 
-        // keep sending out QRs if not sync yet OR 
-        // start playing video if sync'ed and done wait time
         upperleft_x = UPPERLEFT_X + (BAR_WIDTH + BAR_DISTANCE) * (numBars - 1);
-        if (thdata1.time2wait == 0)
-        {
-            // keep sending out QRs sequentially, not sync yet  
-            if (synch == 0 || (loopNum < MAX_FRAMES)) {
-                sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
-                fp = fopen(fileToOpen, "r");
-                fread(video_frame, 1, 640*480*3, fp);
-                pixel_ptr = video_frame;
-
-                /* clear screen */
-                for (y=0; y<479; y++) {
-                    for (x=0; x<640; x++) {
-                        location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                                    (y+vinfo.yoffset) * finfo.line_length;
-                        *((unsigned short int*)(fbp + location)) = 0;
-                    }
-                }
-
-                // shifted positions for left and right QRs              
-                if (numBars % 2 == 0) shift = -150;
-                //else if (numBars % 3 == 1) shift = 0;
-                else shift = 150;
-                //shift = 0;
-
-                // send a QR by updating pixels in the frame buffer
-                for (y=125; y<355; y++) {
-                    for (x=205+shift; x<435+shift; x++) {
-                        red = *pixel_ptr++;
-                        green = *pixel_ptr++;
-                        blue = *pixel_ptr++;
-                       
-                        // remove brightness reduction 
-                        // red /= 3;
-                        // green /= 3;
-                        // blue /= 3;
-                        
-                        location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                                    (y+vinfo.yoffset) * finfo.line_length;
-                        *((unsigned short int*)(fbp + location)) = ((red>>3)<<11)|((green>>2)<<5)|(blue>>3);
-                    }   
-                }
-            }
-            // synch = 1 and time2wait=0 now => start playing video
-            else { // wait=0, sync=1, start playing now                
-                printf("wait=%d, sync=%d, start playing video now...\n", thdata1.time2wait, synch);
-                startPlayVideo = true;
-                // break; change break to next frame
-            }
-        } // end if time2wait == 0
-	 
-        // synch = 1, wait to sync, sending one QR still, for another set detects QR
-        if (thdata1.time2wait != 0 && synch == 1)
-        {
-            sprintf(fileToOpen, "qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
+        
+        /* STEP1: keep sending out QRs,
+                  even after sync, until reach MAX_FRAMES */
+        if (sync == 0 || (loopNum < MAX_FRAMES)) {
+            sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
             fp = fopen(fileToOpen, "r");
             fread(video_frame, 1, 640*480*3, fp);
             pixel_ptr = video_frame;
 
-            // clear screen
+            /* clear screen */
             for (y=0; y<479; y++) {
                 for (x=0; x<640; x++) {
-                    location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                               (y+vinfo.yoffset) * finfo.line_length;
+                    location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                                (y+vinfo.yoffset) * finfo.line_length;
                     *((unsigned short int*)(fbp + location)) = 0;
                 }
             }
 
-            shift = 0;  
-            // send the left QR only
+            // shifted positions for left and right QRs              
+            if (numBars % 2 == 0) shift = -150;
+            //else if (numBars % 3 == 1) shift = 0;
+            else shift = 150;
+            //shift = 0;
+
+            // send a QR by updating pixels in the frame buffer
             for (y=125; y<355; y++) {
                 for (x=205+shift; x<435+shift; x++) {
                     red = *pixel_ptr++;
                     green = *pixel_ptr++;
                     blue = *pixel_ptr++;
+
+                    // remove brightness reduction 
+                    // red /= 3;
+                    // green /= 3;
+                    // blue /= 3;
+
                     location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
                                 (y+vinfo.yoffset) * finfo.line_length;
                     *((unsigned short int*)(fbp + location)) = ((red>>3)<<11)|((green>>2)<<5)|(blue>>3);
-                }  
+                }   
             }
+            
+        }
+        /* STEP5: REACH MAX FRAMES AND sync = 1 => OK to start playing video */ 
+        else { // wait=0, sync=1, start playing now                
+            printf("wait=%d, sync=%d, start playing video now...\n", newtime2wait, sync);
+            startPlayVideo = true;
         }
 
-        // create thread1 to take screenshot of QRs, adjust WAIT_FOR_ALL_PICO_SENDING_QR time to have all pico sets sending their QRs 
-        if (loopNum > WAIT_FOR_ALL_PICO_SENDING_QR && thdata1.time2wait == 0 && synch == 0)
-        {
+        /* STEP2: start after a while and wait for shotAnalyzed then skip with sync = 1
+           create thread1 to take screenshot of QRs, adjust WAIT_FOR_ALL_PICO_SENDING_QR time to have all pico sets sending their QRs 
+         */ 
+        if (loopNum > WAIT_FOR_ALL_PICO_SENDING_QR && thdata1.time2wait == 0 && sync == 0) {
             // Take screenshots to analyze and sync
-            if (tookShot == 0)
-            {
-                // printf("creating screenShoot thread to capture\n");
+            if (tookShot == 0) {
                 pthread_create(&thread1, NULL, &screenShot, &thdata1);
                 tookShot = 1;
             }
-
-            if ((thdata1.time2wait == 0) && thdata1.shotAnalyzed) {
-                printf("SYNC DONE...shotAnalyzed=%d, time2wait=%d...\n", thdata1.shotAnalyzed, thdata1.time2wait);
-                synch = 1;
-                imageCounter = 0;
-                // break; 
-            }
-            else {
-                // printf("FAILED, TAKE ANOTHER...shotAnalyzed=%d, time2wait=%d\n", thdata1.shotAnalyzed, thdata1.time2wait);
-            }
-
-// remove synch_started condition here
-#if 0 
-            if ((synch_started || time2wait == 0) && shotAnalyzed)
-            {
-                printf(">>> start read the first frame \n");
-                synch = 1;
-                imageCounter = 0;
-                fp = fopen("testVideo/frames/00000001.rgb", "r");
-                fread(video_frame, 1, 640*480*3, fp);
-                fclose(fp);
-            }
-#endif 
         }
         
         prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
@@ -1922,7 +1868,6 @@ int picoApp::syncVideo(int BoardID)
     pthread_join(thread1, NULL);
     munmap(fbp, screensize);
     close(fbfd);
-    printf("DONE SYNC VIDEO\n");
     return 0;
 }
 
