@@ -49,7 +49,11 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
             sprintf(matrixFN, "o2h1invh2.txt"); 
             break;
         case ID_TD3:
+            sprintf(matrixFN, "o3h1invh3.txt"); 
+            break;
         case ID_TD4:
+            sprintf(matrixFN, "o4h1invh4.txt"); 
+            break;
         case ID_TD1W:
         default:
             sprintf(matrixFN, "unity.txt"); 
@@ -800,6 +804,7 @@ void *screenShotGetHomography(void* ptrData)
     printf("\n***** Got QR codes, start calculate the homography\n");
 
     double **a1, **a2, **a1inv, **a2inv;
+    double **a3, **a4, **a3inv, **a4inv;
     double *w;
     double **u,**v;
     double *h;
@@ -821,7 +826,11 @@ void *screenShotGetHomography(void* ptrData)
     double offset1[3][3]; 
      */
     
-    double **h1,**h1inv,**h2,**h2inv,**tform2,**otform2,**offset2;
+    double **h1,**h1inv;
+    double **h2,**h2inv,**tform2,**otform2,**offset2;
+    double **h3,**h3inv,**tform3,**otform3,**offset3;
+    double **h4,**h4inv,**tform4,**otform4,**offset4;
+
     double *htl, *hbl, *hbr, *htr, *vtl, *vtr, *vbl, *vbr;
 
     h1     = dmatrix(1,3,1,3); // start row,row size,start col,col size 
@@ -831,6 +840,16 @@ void *screenShotGetHomography(void* ptrData)
     tform2  = dmatrix(1,3,1,3);
     otform2 = dmatrix(1,3,1,3);
     offset2 = dmatrix(1,3,1,3);
+    h3     = dmatrix(1,3,1,3);
+    h3inv  = dmatrix(1,3,1,3);
+    tform3  = dmatrix(1,3,1,3);
+    otform3 = dmatrix(1,3,1,3);
+    offset3 = dmatrix(1,3,1,3);
+    h4     = dmatrix(1,3,1,3);
+    h4inv  = dmatrix(1,3,1,3);
+    tform4  = dmatrix(1,3,1,3);
+    otform4 = dmatrix(1,3,1,3);
+    offset4 = dmatrix(1,3,1,3);
     
     htl    = dvector(1,2); 
     hbl    = dvector(1,2);
@@ -849,6 +868,12 @@ void *screenShotGetHomography(void* ptrData)
     const double x2[] = {0,87,87,253,253,387,387,553,553};
     const double y2[] = {0,157,323,323,157,157,323,323,157};
  
+    const double x3[] = {0,87,87,253,253,387,387,553,553};
+    const double y3[] = {0,157,323,323,157,157,323,323,157};
+ 
+    const double x4[] = {0,87,87,253,253,387,387,553,553};
+    const double y4[] = {0,157,323,323,157,157,323,323,157};
+ 
     // detected corners
 
 // #define REFERENCE_CORNERS_TEST    
@@ -862,8 +887,12 @@ void *screenShotGetHomography(void* ptrData)
     double Y1[] = {0,0,0,0,0,0,0,0,0};
     double X2[] = {0,0,0,0,0,0,0,0,0};
     double Y2[] = {0,0,0,0,0,0,0,0,0};
+    double X3[] = {0,0,0,0,0,0,0,0,0};
+    double Y3[] = {0,0,0,0,0,0,0,0,0};
+    double X4[] = {0,0,0,0,0,0,0,0,0};
+    double Y4[] = {0,0,0,0,0,0,0,0,0};
     
-    /* 1. Get detected corners of set 1 */
+    /* Get detected corners */
     for (i=0; i<MAX_QR; i++) {
         if (qrcorner[i][0] == 1) {
             X1[0] = 1; /* detected valid QR code */
@@ -907,12 +936,56 @@ void *screenShotGetHomography(void* ptrData)
                 }
             }
         }
+        else if (qrcorner[i][0] == 3) {
+            X3[0] = 1; /* detected valid QR code */
+            if (qrcorner[i][1] == 0) {
+                printf("\n*** get detected corners of set 3 LEFT \n");
+                for (j=1; j<=4; j++) {
+                    X3[j] = qrcorner[i][2*j];
+                    printf("%lf ", X3[j]);
+                    Y3[j] = qrcorner[i][2*j+1];
+                    printf("%lf ", Y3[j]);
+                }
+            }
+            else {
+                printf("\n*** get detected corners of set 3 RIGHT \n");
+                for (j=1; j<=4; j++) {
+                    X3[j+4] = qrcorner[i][2*j];
+                    printf("%lf ", X3[j+4]);
+                    Y3[j+4] = qrcorner[i][2*j+1];
+                    printf("%lf ", Y3[j+4]);
+                }
+            }
+        }
+        else if (qrcorner[i][0] == 4) {
+            X4[0] = 1; /* detected valid QR code */
+            if (qrcorner[i][1] == 0) {
+                printf("\n*** get detected corners of set 4 LEFT \n");
+                for (j=1; j<=4; j++) {
+                    X4[j] = qrcorner[i][2*j];
+                    printf("%lf ", X4[j]);
+                    Y4[j] = qrcorner[i][2*j+1];
+                    printf("%lf ", Y4[j]);
+                }
+            }
+            else {
+                printf("\n*** get detected corners of set 4 RIGHT \n");
+                for (j=1; j<=4; j++) {
+                    X4[j+4] = qrcorner[i][2*j];
+                    printf("%lf ", X4[j+4]);
+                    Y4[j+4] = qrcorner[i][2*j+1];
+                    printf("%lf ", Y4[j+4]);
+                }
+            }
+        }
     }
 #endif
     
     /* a matrix */
     a1 = dmatrix(1,NROW,1,NCOL); // mxn 
     a2 = dmatrix(1,NROW,1,NCOL); // mxn 
+    a3 = dmatrix(1,NROW,1,NCOL); // mxn 
+    a4 = dmatrix(1,NROW,1,NCOL); // mxn 
     a1inv = dmatrix(1,NROW,1,NCOL); // mxn 
     a2inv = dmatrix(1,NROW,1,NCOL); // mxn 
 
@@ -1013,15 +1086,63 @@ void *screenShotGetHomography(void* ptrData)
             a2inv[2*i][9] = y2[i];
         }
     
-        printf("\nA1 = \n");
-        for (i=1; i<=NROW; i++) {
-            for (j=1; j<=NCOL; j++) {
+        // calculate a3 for h3
+        for (i=1; i<= NUMBER_OF_POINTS; i++) {
+            a3[2*i-1][1] = -x3[i];
+            a3[2*i-1][2] = -y3[i];
+            a3[2*i-1][3] = -1.0;
+            a3[2*i-1][4] = 0.0;
+            a3[2*i-1][5] = 0.0;
+            a3[2*i-1][6] = 0.0;
+            a3[2*i-1][7] = x3[i]*X3[i];
+            a3[2*i-1][8] = y3[i]*X3[i];
+            a3[2*i-1][9] = X3[i];
+            
+            a3[2*i][1] = 0;
+            a3[2*i][2] = 0;
+            a3[2*i][3] = 0;
+            a3[2*i][4] = -x3[i];
+            a3[2*i][5] = -y3[i];
+            a3[2*i][6] = -1.0;
+            a3[2*i][7] = x3[i]*Y3[i];
+            a3[2*i][8] = y3[i]*Y3[i];
+            a3[2*i][9] = Y3[i];
+        }
+    
+        // calculate a4 for h4
+        for (i=1; i<= NUMBER_OF_POINTS; i++) {
+            a4[2*i-1][1] = -x4[i];
+            a4[2*i-1][2] = -y4[i];
+            a4[2*i-1][3] = -1.0;
+            a4[2*i-1][4] = 0.0;
+            a4[2*i-1][5] = 0.0;
+            a4[2*i-1][6] = 0.0;
+            a4[2*i-1][7] = x4[i]*X4[i];
+            a4[2*i-1][8] = y4[i]*X4[i];
+            a4[2*i-1][9] = X4[i];
+            
+            a4[2*i][1] = 0;
+            a4[2*i][2] = 0;
+            a4[2*i][3] = 0;
+            a4[2*i][4] = -x4[i];
+            a4[2*i][5] = -y4[i];
+            a4[2*i][6] = -1.0;
+            a4[2*i][7] = x4[i]*Y4[i];
+            a4[2*i][8] = y4[i]*Y4[i];
+            a4[2*i][9] = Y4[i];
+        }
+    
+    ////////////////////////////////////////////////////////////////   
+    /* SET 1 h1 and h1inv */
+    printf("\nA1 = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
                 u[i][j] = a1[i][j];
                 printf("%5.0lf ", u[i][j]);    
             }
             printf("\n");
             // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
-	}
+        }
 	svdcmp(u,NROW,NCOL,w,v);
         /* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
@@ -1184,7 +1305,8 @@ void *screenShotGetHomography(void* ptrData)
 	}
         printf("\n");
         
-/////////////////////////////////////////////        
+/* A2inv NOT USED, comment out */
+#if 0
         printf("\n A2inv = \n");
         for (i=1; i<=NROW; i++) {
             for (j=1; j<=NCOL; j++) {
@@ -1227,8 +1349,100 @@ void *screenShotGetHomography(void* ptrData)
             }
 	}
         printf("\n");
+#endif 
+        
+    /* SET 3 */
+    printf("\nA3 = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a3[i][j];
+                printf("%5.0lf ", u[i][j]);    
+        }
+        printf("\n");
+        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+    }
+	svdcmp(u,NROW,NCOL,w,v);
+    /* Sort the singular values in descending order */
+	for (i=1; i<NCOL; i++) {
+        for (j=i+1; j<=NCOL; j++) {
+        	if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
+            }
+        }
+	}
+        
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+	}
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+	}
 
-    /* Write to h2inv.txt */
+    printf("h3 = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h3[i][j] = h[j+3*i-3];
+            printf("%lf ", h3[i][j]);
+        }
+	}
+    printf("\n");    
+        
+    /* SET 4 */
+    printf("\nA4 = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a4[i][j];
+                printf("%5.0lf ", u[i][j]);    
+        }
+        printf("\n");
+        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+    }
+	svdcmp(u,NROW,NCOL,w,v);
+    /* Sort the singular values in descending order */
+	for (i=1; i<NCOL; i++) {
+        for (j=i+1; j<=NCOL; j++) {
+        	if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
+            }
+        }
+	}
+        
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+	}
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+	}
+
+    printf("h4 = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h4[i][j] = h[j+3*i-3];
+            printf("%lf ", h4[i][j]);
+        }
+	}
+    printf("\n");        
+        
+    /* Write to text files */    
+
+/* Write to h2inv.txt, NOT USED comment out */
+#if 0
     matp = fopen("h2inv.txt", "w");
     if (matp == NULL) {
         exit -1;
@@ -1239,8 +1453,30 @@ void *screenShotGetHomography(void* ptrData)
         }
     }
     fclose(matp);
+#endif 
     
-    /* Write to tform2, h1invh2.txt */
+/* OFFSET */
+    /* inversed offset */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            offset2[i][j] = 0;
+            offset3[i][j] = 0;
+            offset4[i][j] = 0;
+        }
+    }
+    offset2[1][1] = offset2[2][2] = offset2[3][3] = 1;
+    offset3[1][1] = offset3[2][2] = offset3[3][3] = 1;
+    offset4[1][1] = offset4[2][2] = offset4[3][3] = 1;
+    // offset2[1][3] = -560; // HUNG TEST -640 current setting = 560
+
+    // DRZM TESTING
+    offset2[1][3] = -560; 
+    offset3[2][3] = -240; 
+    offset4[1][3] = -560; 
+    offset2[1][3] = -240; 
+    
+/* H1invH2*/    
+    /* tform2 = h1invh2 */     
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform2[i][j] = 0;
@@ -1249,6 +1485,8 @@ void *screenShotGetHomography(void* ptrData)
             }
         }
     }
+/* Write to h1invh2.txt NOT USED, comment out */
+#if 0    
     matp = fopen("h1invh2.txt", "w");
     if (matp == NULL) {
         exit -1;
@@ -1259,15 +1497,7 @@ void *screenShotGetHomography(void* ptrData)
         }
     }
     fclose(matp);
-    
-    /* inversed offset2 */
-    for (i=1; i<=3; i++) {
-        for (j=1; j<=3; j++) {
-            offset2[i][j] = 0;
-        }
-    }
-    offset2[1][1] = offset2[2][2] = offset2[3][3] = 1;
-    offset2[1][3] = -560; // HUNG TEST -640 current setting = 560
+#endif
     
     /* Write to o2h1invh2.txt */
     for (i=1; i<=3; i++) {
@@ -1289,7 +1519,68 @@ void *screenShotGetHomography(void* ptrData)
     }
     fclose(matp);
     
-    // HUNG WORKING NEW test with o2h2invh1.txt
+/* H1invH3*/    
+    /* tform2 = h1invh3 */     
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform2[i][j] = tform2[i][j] + h1inv[i][k]*h3[k][j];
+            }
+        }
+    }
+    /* Write to o3h1invh3.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            otform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                otform2[i][j] = otform2[i][j] + offset3[i][k]*tform2[k][j];
+            }
+        }
+    }
+    matp = fopen("o3h1invh3.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            fprintf(matp, "%5.5g ", otform2[i][j]);
+        }
+    }
+    fclose(matp);
+    
+/* H1invH4*/    
+    /* tform2 = h1invh4 */     
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform2[i][j] = tform2[i][j] + h1inv[i][k]*h4[k][j];
+            }
+        }
+    }
+    /* Write to o4h1invh4.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            otform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                otform2[i][j] = otform2[i][j] + offset4[i][k]*tform2[k][j];
+            }
+        }
+    }
+    matp = fopen("o4h1invh4.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            fprintf(matp, "%5.5g ", otform2[i][j]);
+        }
+    }
+    fclose(matp);
+    
+/* o2h2invh1.txt NOT USED, comment out */
+#if 0
     /* Write to tform2, h2invh1.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
@@ -1338,8 +1629,9 @@ void *screenShotGetHomography(void* ptrData)
         }
     }
     fclose(matp);
-    
-    // HUNG TODO 
+#endif    
+
+    /* HUNG TODO */
     // Calculate offset values for blending
     // for (i=1; i<=3; i++) {
     //      offset3[j] = 0;
@@ -1369,11 +1661,9 @@ void *screenShotGetHomography(void* ptrData)
     }
     */
     
-    
     /* END OF HOMOGRAPHY CALCULATION HERE */
 
     tdata->time2wait = WAIT_AFTER_DONE_GET_HOMOGRAPHY; // WAIT FOR ANOTHER CATCH UP
-    
     tdata->shotAnalyzed = 1;
     return tdata;
 }
