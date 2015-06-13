@@ -672,7 +672,7 @@ typedef struct s_thdata {
 #define MAX_QR  4 // Four QR sets
 
 /* screenCapture for getHomography function */
-void *screenCapture(void* ptrData)
+void *screenShotGetHomography(void* ptrData)
 {
     FILE *fp;
     char fileToOpen[50], qrstr[40], *numstr, systemCmd[100];
@@ -685,7 +685,7 @@ void *screenCapture(void* ptrData)
     thread_data *tdata; // pointer to thread_data
     tdata = (thread_data *)ptrData; // get passing pointer  
 
-    printf("screenCapture QRs start...\n");   
+    printf("screenShotGetHomography QRs start...\n");   
 
     // not detect all displayed QRs yet (one per each pico set)
     while (doneCaptureQR != true)
@@ -701,7 +701,7 @@ void *screenCapture(void* ptrData)
         sshotNum++;
 
         // save screenshot to SDCard
-        sprintf(fileToOpen, "shot%04d.png", sshotNum);
+        sprintf(fileToOpen, "shotGetHomography%04d.png", sshotNum);
         while (1)
         {
             fp = fopen(fileToOpen, "r");
@@ -720,7 +720,7 @@ void *screenCapture(void* ptrData)
         // sprintf(systemCmd, "./scan_image sample4qr.png > QRcorners");
         // system(systemCmd);
     
-        sprintf(systemCmd, "./scan_image shot%04d.png > QRcorners", sshotNum);
+        sprintf(systemCmd, "./scan_image shotGetHomography%04d.png > QRcorners", sshotNum);
         system(systemCmd);
 
         /*
@@ -780,7 +780,10 @@ void *screenCapture(void* ptrData)
                 
         printf("#QRs: %d \n", numQR);
         
-        if (numQR >= NUMBER_OF_QRCODE) {
+        // Need to get at least once for each projector, try to get max QRs = 8 first
+        // if (numQR >= NUMBER_OF_QRCODE) {
+        if (numQR >= 8) {
+
             doneCaptureQR = true;
             
             #ifdef DEBUG_HOMOGRAPHY
@@ -794,7 +797,7 @@ void *screenCapture(void* ptrData)
     }
     
     /* START CALCULATE HOMOGRAPHY */
-    printf("***** Get QR codes, start calculate the homography\n");
+    printf("\n***** Got QR codes, start calculate the homography\n");
 
     double **a1, **a2, **a1inv, **a2inv;
     double *w;
@@ -1376,7 +1379,7 @@ void *screenCapture(void* ptrData)
 }
 
 /* screenShot for syncVideo function */
-void *screenShot(void* ptrData)
+void *screenShotSyncVideo(void* ptrData)
 {
     FILE *fp;
     char fileToOpen[50], qrstr[20], *numstr, systemCmd[100];
@@ -1387,7 +1390,7 @@ void *screenShot(void* ptrData)
     thread_data *tdata; // pointer to thread_data
     tdata = (thread_data *)ptrData; // get passing pointer  
 
-    printf("screenShot start\n");   
+    printf(">>>>> screenShotSyncVideo start\n");   
 
     // not detect all displayed QRs yet (one per each pico set)
     while (numProjector != NUMBER_OF_QRCODE)
@@ -1400,7 +1403,7 @@ void *screenShot(void* ptrData)
         sshotNum++;
 
         // save screenshot to SDCard
-        sprintf(fileToOpen, "shot%04d.png", sshotNum);
+        sprintf(fileToOpen, "shotSyncVideo%04d.png", sshotNum);
         while (1)
         {
             fp = fopen(fileToOpen, "r");
@@ -1415,7 +1418,7 @@ void *screenShot(void* ptrData)
         fclose(fp);
 
         // sprintf(systemCmd, "/home/root/zbar-0.10/zbarimg/zbarimg shot%04d.png > QRresult", sshotNum);
-        sprintf(systemCmd, "zbarimg shot%04d.png > QRresult", sshotNum);
+        sprintf(systemCmd, "zbarimg shotSyncVideo%04d.png > QRresult", sshotNum);
         system(systemCmd);
     
         fp = fopen("QRresult", "r");
@@ -1637,7 +1640,7 @@ int picoApp::getHomography(int BoardID)
             }
         }
         else { // synch=1, finish get matrix                
-            printf("*** Done screenCapture...\n");
+            printf("*** done screenShotGetHomography...\n");
             break;
         }
         
@@ -1647,13 +1650,13 @@ int picoApp::getHomography(int BoardID)
             // Take screenshots to analyze and sync
             if (tookShot == 0)
             {
-                printf("*** screenCapture thread...\n");
-                pthread_create(&thread2, NULL, &screenCapture, &thdata2);
+                printf("*** screenShotGetHomography thread...\n");
+                pthread_create(&thread2, NULL, &screenShotGetHomography, &thdata2);
                 tookShot = 1;
             }
 
             if (thdata2.shotAnalyzed) {
-                printf("*** get return from screenCapture...\n");
+                printf("*** get return from screenShotGetHomography...\n");
                 synch = 1;
                 // break; HUNG TEST // should we break here after finished
             }
@@ -1856,7 +1859,7 @@ int picoApp::syncVideo(int BoardID)
         if (loopNum > WAIT_FOR_ALL_PICO_SENDING_QR && thdata1.time2wait == 0 && sync == 0) {
             // Take screenshots to analyze and sync
             if (tookShot == 0) {
-                pthread_create(&thread1, NULL, &screenShot, &thdata1);
+                pthread_create(&thread1, NULL, &screenShotSyncVideo, &thdata1);
                 tookShot = 1;
             }
         }
