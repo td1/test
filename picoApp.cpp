@@ -673,7 +673,7 @@ typedef struct s_thdata {
     char time2wait;
 } thread_data;
 
-#define MAX_QR  4 // Four QR sets
+
 
 /* screenCapture for getHomography function */
 void *screenShotGetHomography(void* ptrData)
@@ -681,7 +681,7 @@ void *screenShotGetHomography(void* ptrData)
     FILE *fp;
     char fileToOpen[50], qrstr[40], *numstr, systemCmd[100];
     int i, j, fileSize, sshotNum = 0, tempNum, projectorID, projectorFN, numQR;
-    int qrcorner[MAX_QR][10];
+    int qrcorner[MAX_PICO_SET][10];
     // HUNG1015 int min_counter = 999;
     
     bool doneCaptureQR = false;
@@ -696,7 +696,7 @@ void *screenShotGetHomography(void* ptrData)
     {
         /* start to capture and analyze one frame */
         numQR = 0;
-        for (i=0; i<MAX_QR; i++)
+        for (i=0; i<MAX_PICO_SET; i++)
             for (j=0; j<10; j++)
                 qrcorner[i][j] = 0;
 
@@ -779,25 +779,15 @@ void *screenShotGetHomography(void* ptrData)
             }
         }
         
-   
-        // count number of projector based on at least one good QR detected for each pico set
-        /*
-        for (i=0; i<MAX_QR; i++) {
-            if (qrcorner[i][0] > 0) 
-                numQR++;
-        }
-         */
         printf("#QRs: %d \n", numQR);
         
-        // Need to get at least once for each projector, try to get max QRs = 8 first
-        // if (numQR >= NUMBER_OF_QRCODE) {
-        if (numQR >= 8) {
-
+        /* Need to get both QR codes for each projector, total 8 QR codes */
+        if (numQR >= NUMBER_OF_QRCODE) { 
             doneCaptureQR = true;
             
             #ifdef DEBUG_HOMOGRAPHY
                 printf("qrcorner= ");
-                for (i=0; i<MAX_QR; i++)
+                for (i=0; i<MAX_PICO_SET; i++)
                     for (j=0; j<10; j++)
                         printf("%d ", qrcorner[i][j]);
             #endif
@@ -898,7 +888,7 @@ void *screenShotGetHomography(void* ptrData)
     double Y4[] = {0,0,0,0,0,0,0,0,0};
     
     /* Get detected corners */
-    for (i=0; i<MAX_QR; i++) {
+    for (i=0; i<MAX_PICO_SET; i++) {
         if (qrcorner[i][0] == 1) {
             X1[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
@@ -1679,7 +1669,7 @@ void *screenShotSyncVideo(void* ptrData)
     FILE *fp;
     char fileToOpen[50], qrstr[20], *numstr, systemCmd[100];
     int i, numProjector = 0, fileSize, tempWait, sshotNum = 0, tempNum, projectorID, projectorFN;
-    int qrcode[MAX_QR];
+    int qrcode[MAX_PICO_SET];
     int min_counter = 999;
 
     thread_data *tdata; // pointer to thread_data
@@ -1691,7 +1681,7 @@ void *screenShotSyncVideo(void* ptrData)
     while (numProjector != NUMBER_OF_QRCODE)
     {
         numProjector = 0;
-        for (i=0; i<MAX_QR; i++) qrcode[i] = 0;
+        for (i=0; i<MAX_PICO_SET; i++) qrcode[i] = 0;
 
         system("echo 'pause' >/tmp/test.fifo");
         system("echo 'screenshot 0' >/tmp/test.fifo");
@@ -1738,11 +1728,11 @@ void *screenShotSyncVideo(void* ptrData)
         }
 
         // count number of projector based on at least one good QR detected for each pico set
-        for (i=0; i<MAX_QR; i++)
+        for (i=0; i<MAX_PICO_SET; i++)
             if (qrcode[i] > 0) numProjector++;
         
         printf("syncVideo #QR = %d ", numProjector);
-        for (i=0; i<MAX_QR; i++)
+        for (i=0; i<MAX_PICO_SET; i++)
             // if (qrcode[i] > 0) 
             printf("%d ", qrcode[i]);
         printf("\n");
@@ -1750,7 +1740,7 @@ void *screenShotSyncVideo(void* ptrData)
 
     // calculate lagging time for my projector
     // find min frame number among projectors
-    for (i=0; i<MAX_QR; i++) {
+    for (i=0; i<MAX_PICO_SET; i++) {
         if (qrcode[i] > 0 && qrcode[i] < min_counter) min_counter = qrcode[i];
     }
 
@@ -1875,7 +1865,9 @@ int picoApp::getHomography(int BoardID)
         // printf("BAR%dLOOP%d ", numBars, loopNum);
 
         // clear screen
-        if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!synch)))
+        // if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!synch)))
+        // prevent clear screen right after sync to continue sending out QRs for others
+        if ((loopNum == 1) || (numBars == MAX_FRAMES))
         {
             for (y=0; y<479; y++)
             for (x=0; x<640; x++)
@@ -1900,7 +1892,7 @@ int picoApp::getHomography(int BoardID)
         {
             if (thdata2.time2wait) 
             {
-                printf("getHomography done...wait %f\n", thdata2.time2wait);
+                printf("getHomography done...wait %d\n", thdata2.time2wait);
                 thdata2.time2wait--;
             }
 
@@ -1951,7 +1943,7 @@ int picoApp::getHomography(int BoardID)
             }
 
             if (thdata2.shotAnalyzed) {
-                printf("*** get return from screenShotGetHomography...\n");
+                printf("*** done screenShotGetHomography, wait for others %d frames\n", thdata2.time2wait);
                 synch = 1;
                 // break; HUNG TEST // should we break here after finished
             }

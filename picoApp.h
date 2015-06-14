@@ -34,7 +34,8 @@ extern "C" {
 #define ID_TD4              4
 #define ID_TD1W             5
 
-#define NUMBER_OF_QRCODE    4   // getHomography - screenCapture two QRs code each set, x98 and x99
+#define MAX_PICO_SET        4   // Four PICO sets
+#define NUMBER_OF_QRCODE    8   // getHomography - screenCapture two QRs code each set, x98 and x99
                                 // syncVideo - screenShot two QRs code sequentially send, x01, x02...x99
                                 // 4 sets, total QRs = 8
 
