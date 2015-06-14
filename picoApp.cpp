@@ -1677,7 +1677,7 @@ void *screenShotSyncVideo(void* ptrData)
     printf(">>>>> screenShotSyncVideo start\n");   
 
     // not detect all displayed QRs yet (one per each pico set)
-    while (numProjector != NUMBER_OF_QRCODE)
+    while (numProjector != MAX_PICO_SET)
     {
         numProjector = 0;
         for (i=0; i<MAX_PICO_SET; i++) qrcode[i] = 0;
