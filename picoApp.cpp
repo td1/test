@@ -705,7 +705,7 @@ void *screenShotGetHomography(void* ptrData)
         sshotNum++;
 
         // save screenshot to SDCard
-        sprintf(fileToOpen, "shotGetHomography%04d.png", sshotNum);
+        sprintf(fileToOpen, "shot%04d.png", sshotNum);
         while (1)
         {
             fp = fopen(fileToOpen, "r");
@@ -724,7 +724,7 @@ void *screenShotGetHomography(void* ptrData)
         // sprintf(systemCmd, "./scan_image sample4qr.png > QRcorners");
         // system(systemCmd);
     
-        sprintf(systemCmd, "./scan_image shotGetHomography%04d.png > QRcorners", sshotNum);
+        sprintf(systemCmd, "./scan_image shot%04d.png > QRcorners", sshotNum);
         system(systemCmd);
 
         /*
@@ -1693,7 +1693,7 @@ void *screenShotSyncVideo(void* ptrData)
         sshotNum++;
 
         // save screenshot to SDCard
-        sprintf(fileToOpen, "shotSyncVideo%04d.png", sshotNum);
+        sprintf(fileToOpen, "shot%04d.png", sshotNum);
         while (1)
         {
             fp = fopen(fileToOpen, "r");
@@ -1708,7 +1708,7 @@ void *screenShotSyncVideo(void* ptrData)
         fclose(fp);
 
         // sprintf(systemCmd, "/home/root/zbar-0.10/zbarimg/zbarimg shot%04d.png > QRresult", sshotNum);
-        sprintf(systemCmd, "zbarimg shotSyncVideo%04d.png > QRresult", sshotNum);
+        sprintf(systemCmd, "zbarimg shot%04d.png > QRresult", sshotNum);
         system(systemCmd);
     
         fp = fopen("QRresult", "r");
