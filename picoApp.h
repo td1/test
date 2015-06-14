@@ -39,7 +39,7 @@ extern "C" {
                                 // syncVideo - screenShot two QRs code sequentially send, x01, x02...x99
                                 // 4 sets, total QRs = 8
 
-#define WAIT_AFTER_DONE_GET_HOMOGRAPHY  20 // 5 HUNG TEST extended waiting time after done getHomography
+#define WAIT_AFTER_DONE_GET_HOMOGRAPHY  50 // 5 HUNG TEST extended waiting time after done getHomography
 #define MIN_FRAME_DELAY     20
 
 #define MAX_FRAMES          99
