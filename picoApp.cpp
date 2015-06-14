@@ -681,8 +681,7 @@ void *screenShotGetHomography(void* ptrData)
     FILE *fp;
     char fileToOpen[50], qrstr[40], *numstr, systemCmd[100];
     int i, j, fileSize, sshotNum = 0, tempNum, projectorID, projectorFN, numQR;
-    int qrcorner[MAX_PICO_SET][10];
-    // HUNG1015 int min_counter = 999;
+    int qrcorner[NUMBER_OF_QRCODE][10];
     
     bool doneCaptureQR = false;
     
@@ -696,7 +695,7 @@ void *screenShotGetHomography(void* ptrData)
     {
         /* start to capture and analyze one frame */
         numQR = 0;
-        for (i=0; i<MAX_PICO_SET; i++)
+        for (i=0; i<NUMBER_OF_QRCODE; i++)
             for (j=0; j<10; j++)
                 qrcorner[i][j] = 0;
 
@@ -787,7 +786,7 @@ void *screenShotGetHomography(void* ptrData)
             
             #ifdef DEBUG_HOMOGRAPHY
                 printf("qrcorner= ");
-                for (i=0; i<MAX_PICO_SET; i++)
+                for (i=0; i<NUMBER_OF_QRCODE; i++)
                     for (j=0; j<10; j++)
                         printf("%d ", qrcorner[i][j]);
             #endif
@@ -888,11 +887,11 @@ void *screenShotGetHomography(void* ptrData)
     double Y4[] = {0,0,0,0,0,0,0,0,0};
     
     /* Get detected corners */
-    for (i=0; i<MAX_PICO_SET; i++) {
+    for (i=0; i<NUMBER_OF_QRCODE; i++) {
         if (qrcorner[i][0] == 1) {
             X1[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** get detected corners of set 1 LEFT \n");
+                printf("\n*** set1 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X1[j] = qrcorner[i][2*j];
                     printf("%lf ", X1[j]);
@@ -901,7 +900,7 @@ void *screenShotGetHomography(void* ptrData)
                 }
             }
             else {
-                printf("\n*** get detected corners of set 1 RIGHT \n");
+                printf("\n*** set1 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X1[j+4] = qrcorner[i][2*j];
                     printf("%lf ", X1[j+4]);
@@ -913,7 +912,7 @@ void *screenShotGetHomography(void* ptrData)
         else if (qrcorner[i][0] == 2) {
             X2[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** get detected corners of set 2 LEFT \n");
+                printf("\n*** set2 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X2[j] = qrcorner[i][2*j];
                     printf("%lf ", X2[j]);
@@ -922,7 +921,7 @@ void *screenShotGetHomography(void* ptrData)
                 }
             }
             else {
-                printf("\n*** get detected corners of set 2 RIGHT \n");
+                printf("\n*** set2 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X2[j+4] = qrcorner[i][2*j];
                     printf("%lf ", X2[j+4]);
@@ -934,7 +933,7 @@ void *screenShotGetHomography(void* ptrData)
         else if (qrcorner[i][0] == 3) {
             X3[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** get detected corners of set 3 LEFT \n");
+                printf("\n*** set3 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X3[j] = qrcorner[i][2*j];
                     printf("%lf ", X3[j]);
@@ -943,7 +942,7 @@ void *screenShotGetHomography(void* ptrData)
                 }
             }
             else {
-                printf("\n*** get detected corners of set 3 RIGHT \n");
+                printf("\n*** set3 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X3[j+4] = qrcorner[i][2*j];
                     printf("%lf ", X3[j+4]);
@@ -955,7 +954,7 @@ void *screenShotGetHomography(void* ptrData)
         else if (qrcorner[i][0] == 4) {
             X4[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** get detected corners of set 4 LEFT \n");
+                printf("\n*** set4 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X4[j] = qrcorner[i][2*j];
                     printf("%lf ", X4[j]);
@@ -964,7 +963,7 @@ void *screenShotGetHomography(void* ptrData)
                 }
             }
             else {
-                printf("\n*** get detected corners of set 4 RIGHT \n");
+                printf("\n*** set4 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X4[j+4] = qrcorner[i][2*j];
                     printf("%lf ", X4[j+4]);
