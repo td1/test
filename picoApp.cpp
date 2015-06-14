@@ -747,6 +747,7 @@ void *screenShotGetHomography(void* ptrData)
         
         fp = fopen("QRcorners", "r");
         i = j = 0;
+        numQR = 0;
         while(!feof(fp))
         {
             if (fgets(qrstr, 50, fp) != NULL)
@@ -766,6 +767,7 @@ void *screenShotGetHomography(void* ptrData)
                         qrcorner[i][0] = projectorID;
                         qrcorner[i][1] = projectorFN % 2;
                         j = 2;
+                        numQR ++;
                     }
                     else {
                         qrcorner[i][j] = tempNum;
@@ -779,9 +781,12 @@ void *screenShotGetHomography(void* ptrData)
         
    
         // count number of projector based on at least one good QR detected for each pico set
-        for (i=0; i<MAX_QR; i++)
-            if (qrcorner[i][0] > 0) numQR++;
-                
+        /*
+        for (i=0; i<MAX_QR; i++) {
+            if (qrcorner[i][0] > 0) 
+                numQR++;
+        }
+         */
         printf("#QRs: %d \n", numQR);
         
         // Need to get at least once for each projector, try to get max QRs = 8 first
