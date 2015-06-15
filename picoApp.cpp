@@ -1463,11 +1463,17 @@ void *screenShotGetHomography(void* ptrData)
     offset4[1][1] = offset4[2][2] = offset4[3][3] = 1;
     // offset2[1][3] = -560; // HUNG TEST -640 current setting = 560
 
-    // DRZM TESTING
+#ifdef NO_OFFSET
+    offset2[1][3] = 0; 
+    offset3[2][3] = 0; 
+    offset4[1][3] = 0; 
+    offset4[2][3] = 0; 
+#else
     offset2[1][3] = -560; 
     offset3[2][3] = -240; 
     offset4[1][3] = -560; 
-    offset2[1][3] = -240; 
+    offset4[1][3] = -240; 
+#endif
     
 /* H1invH2*/    
     /* tform2 = h1invh2 */     
