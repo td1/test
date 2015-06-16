@@ -41,7 +41,26 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
     
     getHomography(boardID);
       
-	switch (boardID) {
+#ifdef USE_COMMON_HOMOGRAPHY	
+    switch (boardID) {
+        case ID_TD1:
+            sprintf(matrixFN, "unity.txt"); 
+            break;
+        case ID_TD2:
+            sprintf(matrixFN, "tform2.txt"); 
+            break;
+        case ID_TD3:
+            sprintf(matrixFN, "tform3.txt"); 
+            break;
+        case ID_TD4:
+            sprintf(matrixFN, "tform4.txt"); 
+            break;
+        case ID_TD1W:
+        default:
+            sprintf(matrixFN, "unity.txt"); 
+    }
+#else
+    switch (boardID) {
         case ID_TD1:
             sprintf(matrixFN, "unity.txt"); 
             break;
@@ -58,6 +77,8 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
         default:
             sprintf(matrixFN, "unity.txt"); 
     }
+#endif    
+    
     readMatrix2(matrixFN);
 
     syncVideo(boardID);
@@ -826,8 +847,8 @@ void *screenShotGetHomography(void* ptrData)
     
     double **h1,**h1inv;
     double **h2,**h2inv,**tform2,**otform2,**offset2;
-    double **h3,**h3inv,**tform3,**otform3,**offset3;
-    double **h4,**h4inv,**tform4,**otform4,**offset4;
+    double **h3,**h3inv,**offset3;
+    double **h4,**h4inv,**offset4;
 
     double *htl, *hbl, *hbr, *htr, *vtl, *vtr, *vbl, *vbr;
 
@@ -840,13 +861,9 @@ void *screenShotGetHomography(void* ptrData)
     offset2 = dmatrix(1,3,1,3);
     h3     = dmatrix(1,3,1,3);
     h3inv  = dmatrix(1,3,1,3);
-    tform3  = dmatrix(1,3,1,3);
-    otform3 = dmatrix(1,3,1,3);
     offset3 = dmatrix(1,3,1,3);
     h4     = dmatrix(1,3,1,3);
     h4inv  = dmatrix(1,3,1,3);
-    tform4  = dmatrix(1,3,1,3);
-    otform4 = dmatrix(1,3,1,3);
     offset4 = dmatrix(1,3,1,3);
     
     htl    = dvector(1,2); 
@@ -1014,7 +1031,8 @@ void *screenShotGetHomography(void* ptrData)
             a1[2*i][8] = y1[i]*Y1[i];
             a1[2*i][9] = Y1[i];
         }
-    
+ 
+#if 0
         // calculate a1inv for h1inv
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a1inv[2*i-1][1] = -X1[i];
@@ -1060,7 +1078,7 @@ void *screenShotGetHomography(void* ptrData)
             a2[2*i][8] = y2[i]*Y2[i];
             a2[2*i][9] = Y2[i];
         }
-
+#endif
         // calculate a2inv for h2inv
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a2inv[2*i-1][1] = -X2[i];
@@ -1083,7 +1101,8 @@ void *screenShotGetHomography(void* ptrData)
             a2inv[2*i][8] = Y2[i]*y2[i];
             a2inv[2*i][9] = y2[i];
         }
-    
+
+#if 0     
         // calculate a3 for h3
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a3[2*i-1][1] = -x3[i];
@@ -1106,7 +1125,31 @@ void *screenShotGetHomography(void* ptrData)
             a3[2*i][8] = y3[i]*Y3[i];
             a3[2*i][9] = Y3[i];
         }
+#endif    
+        // calculate a3inv for h3inv
+        for (i=1; i<= NUMBER_OF_POINTS; i++) {
+            a3inv[2*i-1][1] = -X3[i];
+            a3inv[2*i-1][2] = -Y3[i];
+            a3inv[2*i-1][3] = -1.0;
+            a3inv[2*i-1][4] = 0.0;
+            a3inv[2*i-1][5] = 0.0;
+            a3inv[2*i-1][6] = 0.0;
+            a3inv[2*i-1][7] = X3[i]*x3[i];
+            a3inv[2*i-1][8] = Y2[i]*x3[i];
+            a3inv[2*i-1][9] = x3[i];
+            
+            a3inv[2*i][1] = 0;
+            a3inv[2*i][2] = 0;
+            a3inv[2*i][3] = 0;
+            a3inv[2*i][4] = -X3[i];
+            a3inv[2*i][5] = -Y3[i];
+            a3inv[2*i][6] = -1.0;
+            a3inv[2*i][7] = X3[i]*y3[i];
+            a3inv[2*i][8] = Y3[i]*y3[i];
+            a3inv[2*i][9] = y3[i];
+        }
     
+#if 0
         // calculate a4 for h4
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a4[2*i-1][1] = -x4[i];
@@ -1128,6 +1171,30 @@ void *screenShotGetHomography(void* ptrData)
             a4[2*i][7] = x4[i]*Y4[i];
             a4[2*i][8] = y4[i]*Y4[i];
             a4[2*i][9] = Y4[i];
+        }
+#endif
+    
+        // calculate a4inv for h4inv
+        for (i=1; i<= NUMBER_OF_POINTS; i++) {
+            a4inv[2*i-1][1] = -X4[i];
+            a4inv[2*i-1][2] = -Y4[i];
+            a4inv[2*i-1][3] = -1.0;
+            a4inv[2*i-1][4] = 0.0;
+            a4inv[2*i-1][5] = 0.0;
+            a4inv[2*i-1][6] = 0.0;
+            a4inv[2*i-1][7] = X4[i]*x4[i];
+            a4inv[2*i-1][8] = Y4[i]*x4[i];
+            a4inv[2*i-1][9] = x4[i];
+            
+            a4inv[2*i][1] = 0;
+            a4inv[2*i][2] = 0;
+            a4inv[2*i][3] = 0;
+            a4inv[2*i][4] = -X4[i];
+            a4inv[2*i][5] = -Y4[i];
+            a4inv[2*i][6] = -1.0;
+            a4inv[2*i][7] = X4[i]*y4[i];
+            a4inv[2*i][8] = Y4[i]*y4[i];
+            a4inv[2*i][9] = y4[i];
         }
     
     ////////////////////////////////////////////////////////////////   
@@ -1189,6 +1256,7 @@ void *screenShotGetHomography(void* ptrData)
         printf("\n");
         
 /////////////////////////////////////////////        
+#if 0 
         printf("\n A1inv = \n");
         for (i=1; i<=NROW; i++) {
             for (j=1; j<=NCOL; j++) {
@@ -1244,12 +1312,8 @@ void *screenShotGetHomography(void* ptrData)
 	}
         printf("\n");
         
-         /* Write to h1inv.txt */
-    FILE *matp;
-    matp = fopen("h1inv.txt", "w");
-    if (matp == NULL) {
-        exit -1;
-    }
+    
+    /* Write to h1inv.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             fprintf(matp, "%f ", h1inv[i][j]);
@@ -1257,8 +1321,10 @@ void *screenShotGetHomography(void* ptrData)
     }
     fclose(matp);
     
+#endif     
         
 ////////////////////////////////////////////////////////
+#if 0
         printf("\n A2 = \n");
         for (i=1; i<=NROW; i++) {
             for (j=1; j<=NCOL; j++) {
@@ -1302,17 +1368,17 @@ void *screenShotGetHomography(void* ptrData)
             }
 	}
         printf("\n");
+#endif
         
-/* A2inv NOT USED, comment out */
-#if 0
-        printf("\n A2inv = \n");
-        for (i=1; i<=NROW; i++) {
-            for (j=1; j<=NCOL; j++) {
-                u[i][j] = a2inv[i][j];
-                printf("%5.0lf ", u[i][j]);    
-            }
-            printf("\n");
-            // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+/* A2inv */
+    printf("\n A2inv = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a2inv[i][j];
+            printf("%5.0lf ", u[i][j]);    
+        }
+        printf("\n");
+        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
 	}
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
@@ -1347,8 +1413,8 @@ void *screenShotGetHomography(void* ptrData)
             }
 	}
         printf("\n");
-#endif 
-        
+
+#if 0
     /* SET 3 */
     printf("\nA3 = \n");
     for (i=1; i<=NROW; i++) {
@@ -1392,7 +1458,58 @@ void *screenShotGetHomography(void* ptrData)
         }
 	}
     printf("\n");    
-        
+#endif
+
+/* A3inv */
+    printf("\n A3inv = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a3inv[i][j];
+            printf("%5.0lf ", u[i][j]);    
+        }
+        printf("\n");
+        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+	}
+	svdcmp(u,NROW,NCOL,w,v);
+	/* Sort the singular values in descending order */
+	for (i=1; i<NCOL; i++) {
+            for (j=i+1; j<=NCOL; j++) {
+		if (w[i]<w[j]) {
+                    t = w[i];
+                    w[i] = w[j];
+                    w[j] = t;
+                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
+		}
+            }
+	}
+        for (i=1; i<=NCOL; i++) {
+            h[i] = v[i][9];
+            // printf("        h[%d]    = %lf\n", i, h[i]);
+	}
+         for (i=1; i<=NCOL; i++) {
+            h[i] = h[i]/h[9];
+            // printf("        H[%d]    = %lf\n", i, h[i]);
+	}
+        printf("h3inv = ");
+        for (i=1; i<=3; i++) {
+            for (j=1; j<=3; j++) {
+                h3inv[i][j] = h[j+3*i-3];
+                printf("%lf ", h3inv[i][j]);
+            }
+	}
+    printf("\n");
+
+
+
+
+
+    
+#if 0
     /* SET 4 */
     printf("\nA4 = \n");
     for (i=1; i<=NROW; i++) {
@@ -1436,9 +1553,58 @@ void *screenShotGetHomography(void* ptrData)
         }
 	}
     printf("\n");        
-        
-    /* Write to text files */    
+#endif     
 
+/* A4inv */
+    printf("\n A4inv = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a4inv[i][j];
+            printf("%5.0lf ", u[i][j]);    
+        }
+        printf("\n");
+        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+	}
+	svdcmp(u,NROW,NCOL,w,v);
+	/* Sort the singular values in descending order */
+	for (i=1; i<NCOL; i++) {
+            for (j=i+1; j<=NCOL; j++) {
+		if (w[i]<w[j]) {
+                    t = w[i];
+                    w[i] = w[j];
+                    w[j] = t;
+                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
+		}
+            }
+	}
+        for (i=1; i<=NCOL; i++) {
+            h[i] = v[i][9];
+            // printf("        h[%d]    = %lf\n", i, h[i]);
+	}
+         for (i=1; i<=NCOL; i++) {
+            h[i] = h[i]/h[9];
+            // printf("        H[%d]    = %lf\n", i, h[i]);
+	}
+        printf("h4inv = ");
+        for (i=1; i<=3; i++) {
+            for (j=1; j<=3; j++) {
+                h4inv[i][j] = h[j+3*i-3];
+                printf("%lf ", h4inv[i][j]);
+            }
+	}
+    printf("\n");
+
+
+    
+    /******************************************************************************/
+    /* Write to text files                                                        */    
+    /******************************************************************************/
+FILE *matp;
 /* Write to h2inv.txt, NOT USED comment out */
 #if 0
     matp = fopen("h2inv.txt", "w");
@@ -1473,13 +1639,14 @@ void *screenShotGetHomography(void* ptrData)
     offset4[1][3] = 0; 
     offset4[2][3] = 0; 
 #else
-    offset2[1][3] = -560; 
-    offset3[2][3] = -240; 
-    offset4[1][3] = -560; 
-    offset4[1][3] = -240; 
+    offset2[1][3] = 560; 
+    offset3[2][3] = 480; 
+    offset4[1][3] = 560; 
+    offset4[1][3] = 480; 
 #endif
     
-/* H1invH2*/    
+#if 0
+    /* H1invH2*/    
     /* tform2 = h1invh2 */     
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
@@ -1489,6 +1656,8 @@ void *screenShotGetHomography(void* ptrData)
             }
         }
     }
+#endif
+    
 /* Write to h1invh2.txt NOT USED, comment out */
 #if 0    
     matp = fopen("h1invh2.txt", "w");
@@ -1503,6 +1672,7 @@ void *screenShotGetHomography(void* ptrData)
     fclose(matp);
 #endif
     
+#if 0
     /* Write to o2h1invh2.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
@@ -1522,7 +1692,9 @@ void *screenShotGetHomography(void* ptrData)
         }
     }
     fclose(matp);
-    
+#endif
+
+#if 0    
 /* H1invH3*/    
     /* tform2 = h1invh3 */     
     for (i=1; i<=3; i++) {
@@ -1552,7 +1724,9 @@ void *screenShotGetHomography(void* ptrData)
         }
     }
     fclose(matp);
-    
+#endif
+
+#if 0    
 /* H1invH4*/    
     /* tform2 = h1invh4 */     
     for (i=1; i<=3; i++) {
@@ -1582,6 +1756,7 @@ void *screenShotGetHomography(void* ptrData)
         }
     }
     fclose(matp);
+#endif
     
 /* o2h2invh1.txt NOT USED, comment out */
 #if 0
@@ -1635,6 +1810,102 @@ void *screenShotGetHomography(void* ptrData)
     fclose(matp);
 #endif    
 
+/* h2invh1o2.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform2[i][j] = tform2[i][j] + h2inv[i][k]*h1[k][j];
+            }
+        }
+    }
+    
+    /* Write to h2invh1o2.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            otform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                otform2[i][j] = otform2[i][j] + tform2[i][k]*offset2[k][j];
+            }
+        }
+    }
+    matp = fopen("h2invh1o2.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            fprintf(matp, "%5.5g ", otform2[i][j]);
+        }
+    }
+    fclose(matp);
+    
+/* h3invh1o3.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform2[i][j] = tform2[i][j] + h3inv[i][k]*h1[k][j];
+            }
+        }
+    }
+    
+    /* Write to h3invh1o3.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            otform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                otform2[i][j] = otform2[i][j] + tform2[i][k]*offset3[k][j];
+            }
+        }
+    }
+    matp = fopen("h3invh1o3.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            fprintf(matp, "%5.5g ", otform2[i][j]);
+        }
+    }
+    fclose(matp);
+    
+/* h4invh1o4.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform2[i][j] = tform2[i][j] + h4inv[i][k]*h1[k][j];
+            }
+        }
+    }
+    
+    /* Write to h4invh1o4.txt */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            otform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                otform2[i][j] = otform2[i][j] + tform2[i][k]*offset4[k][j];
+            }
+        }
+    }
+    matp = fopen("h4invh1o4.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            fprintf(matp, "%5.5g ", otform2[i][j]);
+        }
+    }
+    fclose(matp);
+    
+    
+    
+    
+    
+    
+    
     /* HUNG TODO */
     // Calculate offset values for blending
     // for (i=1; i<=3; i++) {
