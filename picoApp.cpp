@@ -784,6 +784,10 @@ void *screenShotGetHomography(void* ptrData)
         if (numQR >= NUMBER_OF_QRCODE) { 
             doneCaptureQR = true;
             
+            /* save the last shot to sample8qr.png */
+            sprintf(systemCmd, "cp shot%04d.png sample8qr_td%01d.png", sshotNum, tdata->myID);
+            system(systemCmd);
+            
             #ifdef DEBUG_HOMOGRAPHY
                 printf("qrcorner= ");
                 for (i=0; i<NUMBER_OF_QRCODE; i++)
