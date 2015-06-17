@@ -998,17 +998,19 @@ void *screenShotGetHomography(void* ptrData)
     
     /* a matrix */
     a1 = dmatrix(1,NROW,1,NCOL); // mxn 
-    a2 = dmatrix(1,NROW,1,NCOL); // mxn 
-    a3 = dmatrix(1,NROW,1,NCOL); // mxn 
-    a4 = dmatrix(1,NROW,1,NCOL); // mxn 
-    a1inv = dmatrix(1,NROW,1,NCOL); // mxn 
+    //a2 = dmatrix(1,NROW,1,NCOL); // mxn 
+    //a3 = dmatrix(1,NROW,1,NCOL); // mxn 
+    //a4 = dmatrix(1,NROW,1,NCOL); // mxn 
+    //a1inv = dmatrix(1,NROW,1,NCOL); // mxn 
     a2inv = dmatrix(1,NROW,1,NCOL); // mxn 
+    a3inv = dmatrix(1,NROW,1,NCOL); // mxn 
+    a4inv = dmatrix(1,NROW,1,NCOL); // mxn 
 
     u = dmatrix(1,NROW,1,NCOL); // mxn
     w = dvector(1,NCOL);     // 1xn
     v = dmatrix(1,NCOL,1,NCOL); // nxn
     h = dvector(1,NCOL);     // 1xn
-
+    
         // calculate a1 for h1
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a1[2*i-1][1] = -x1[i];
@@ -1202,12 +1204,12 @@ void *screenShotGetHomography(void* ptrData)
     printf("\nA1 = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
-                u[i][j] = a1[i][j];
-                printf("%5.0lf ", u[i][j]);    
-            }
+            u[i][j] = a1[i][j];
+            printf("%5.0lf ", u[i][j]);    
+        }
             printf("\n");
             // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
-        }
+    }
 	svdcmp(u,NROW,NCOL,w,v);
         /* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
@@ -1253,7 +1255,7 @@ void *screenShotGetHomography(void* ptrData)
                 printf("%lf ", h1[i][j]);
             }
 	}
-        printf("\n");
+    printf("\n");
         
 /////////////////////////////////////////////        
 #if 0 
