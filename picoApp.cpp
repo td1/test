@@ -806,7 +806,8 @@ void *screenShotGetHomography(void* ptrData)
             doneCaptureQR = true;
             
             /* save the last shot to sample8qr.png */
-            sprintf(systemCmd, "cp shot%04d.png sample8qr_td%01d.png", sshotNum, tdata->myID);
+            // sprintf(systemCmd, "cp shot%04d.png sample8qr_td%01d.png", sshotNum, tdata->myID);
+            sprintf(systemCmd, "cp shot%04d.png sample8qr.png", sshotNum);
             system(systemCmd);
             
             #ifdef DEBUG_HOMOGRAPHY
@@ -2072,9 +2073,9 @@ int picoApp::getHomography(int BoardID)
     unsigned char *pixel_ptr;
     video_frame = (unsigned char*)malloc(640*480*3);
 
-    // HUNG mutex = PTHREAD_MUTEX_INITIALIZER;
-    barRate = 0.2;
-    framePeriod = 0.2;
+    /* change rate from 0.2 to 0.3 */
+    barRate = 0.3;
+    framePeriod = 0.3;
 
     pthread_t thread2;
     thread_data thdata2; // instantiate passing thread data
@@ -2265,9 +2266,9 @@ int picoApp::syncVideo(int BoardID)
     unsigned char *video_frame = (unsigned char*)malloc(640*480*3);
     unsigned char *pixel_ptr;
     
-    // HUNG mutex = PTHREAD_MUTEX_INITIALIZER;
-    barRate = 0.2;
-    framePeriod = 0.2;
+    /* change rate from 0.2 to 0.3 */
+    barRate = 0.3;
+    framePeriod = 0.3;
 
     pthread_t thread1;
     thread_data thdata1; // instantiate passing thread data
