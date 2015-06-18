@@ -1137,7 +1137,7 @@ void *screenShotGetHomography(void* ptrData)
             a3inv[2*i-1][5] = 0.0;
             a3inv[2*i-1][6] = 0.0;
             a3inv[2*i-1][7] = X3[i]*x3[i];
-            a3inv[2*i-1][8] = Y2[i]*x3[i];
+            a3inv[2*i-1][8] = Y3[i]*x3[i];
             a3inv[2*i-1][9] = x3[i];
             
             a3inv[2*i][1] = 0;
@@ -1211,21 +1211,21 @@ void *screenShotGetHomography(void* ptrData)
             // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
     }
 	svdcmp(u,NROW,NCOL,w,v);
-        /* Sort the singular values in descending order */
+    /* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
-            for (j=i+1; j<=NCOL; j++) {
-		if (w[i]<w[j]) {
-                    t = w[i];
-                    w[i] = w[j];
-                    w[j] = t;
-                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
-                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
-                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
-                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
-                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
-                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
-		}
+        for (j=i+1; j<=NCOL; j++) {
+            if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
             }
+        }
 	}
         
         /*
@@ -1385,36 +1385,36 @@ void *screenShotGetHomography(void* ptrData)
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
-            for (j=i+1; j<=NCOL; j++) {
-		if (w[i]<w[j]) {
-                    t = w[i];
-                    w[i] = w[j];
-                    w[j] = t;
-                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
-                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
-                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
-                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
-                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
-                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
-		}
+        for (j=i+1; j<=NCOL; j++) {
+		    if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
             }
+       }
 	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = v[i][9];
-            // printf("        h[%d]    = %lf\n", i, h[i]);
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+        // printf("        h[%d]    = %lf\n", i, h[i]);
 	}
-         for (i=1; i<=NCOL; i++) {
-            h[i] = h[i]/h[9];
-            // printf("        H[%d]    = %lf\n", i, h[i]);
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+        // printf("        H[%d]    = %lf\n", i, h[i]);
 	}
-        printf("h2inv = ");
-        for (i=1; i<=3; i++) {
-            for (j=1; j<=3; j++) {
-                h2inv[i][j] = h[j+3*i-3];
-                printf("%lf ", h2inv[i][j]);
-            }
+    printf("h2inv = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h2inv[i][j] = h[j+3*i-3];
+            printf("%lf ", h2inv[i][j]);
+        }
 	}
-        printf("\n");
+    printf("\n");
 
 #if 0
     /* SET 3 */
@@ -1475,41 +1475,36 @@ void *screenShotGetHomography(void* ptrData)
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
-            for (j=i+1; j<=NCOL; j++) {
-		if (w[i]<w[j]) {
-                    t = w[i];
-                    w[i] = w[j];
-                    w[j] = t;
-                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
-                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
-                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
-                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
-                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
-                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
-		}
+        for (j=i+1; j<=NCOL; j++) {
+            if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
             }
+        }
 	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = v[i][9];
-            // printf("        h[%d]    = %lf\n", i, h[i]);
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+        // printf("        h[%d]    = %lf\n", i, h[i]);
 	}
-         for (i=1; i<=NCOL; i++) {
-            h[i] = h[i]/h[9];
-            // printf("        H[%d]    = %lf\n", i, h[i]);
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+        // printf("        H[%d]    = %lf\n", i, h[i]);
 	}
-        printf("h3inv = ");
-        for (i=1; i<=3; i++) {
-            for (j=1; j<=3; j++) {
-                h3inv[i][j] = h[j+3*i-3];
-                printf("%lf ", h3inv[i][j]);
-            }
+    printf("h3inv = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h3inv[i][j] = h[j+3*i-3];
+            printf("%lf ", h3inv[i][j]);
+        }
 	}
     printf("\n");
-
-
-
-
-
     
 #if 0
     /* SET 4 */
@@ -1570,34 +1565,34 @@ void *screenShotGetHomography(void* ptrData)
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
-            for (j=i+1; j<=NCOL; j++) {
-		if (w[i]<w[j]) {
-                    t = w[i];
-                    w[i] = w[j];
-                    w[j] = t;
-                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
-                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
-                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
-                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
-                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
-                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
-		}
+        for (j=i+1; j<=NCOL; j++) {
+        	if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
             }
+        }
 	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = v[i][9];
-            // printf("        h[%d]    = %lf\n", i, h[i]);
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+        // printf("        h[%d]    = %lf\n", i, h[i]);
 	}
-         for (i=1; i<=NCOL; i++) {
-            h[i] = h[i]/h[9];
-            // printf("        H[%d]    = %lf\n", i, h[i]);
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+        // printf("        H[%d]    = %lf\n", i, h[i]);
 	}
-        printf("h4inv = ");
-        for (i=1; i<=3; i++) {
-            for (j=1; j<=3; j++) {
-                h4inv[i][j] = h[j+3*i-3];
-                printf("%lf ", h4inv[i][j]);
-            }
+    printf("h4inv = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h4inv[i][j] = h[j+3*i-3];
+            printf("%lf ", h4inv[i][j]);
+        }
 	}
     printf("\n");
 
