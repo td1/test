@@ -9,4 +9,4 @@ cp tform4.txt ~/openFrameworks/addons/ofxOMXPlayer/hung_pixel_dl/bin/
 cp bbb.sh ~/openFrameworks/addons/ofxOMXPlayer/hung_pixel_dl/
 #cp playing.sh ~/openFrameworks/addons/ofxOMXPlayer/hung_pixel_dl/bin/
 chmod 777 ~/openFrameworks/addons/ofxOMXPlayer/hung_pixel_dl/src/picoApp.cpp
-cp sample4qr*.png ~/winshare 
+cp sample8qr*.png ~/winshare 
