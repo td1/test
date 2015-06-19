@@ -1640,7 +1640,7 @@ FILE *matp;
     offset2[1][3] = 640; 
     offset3[2][3] = 480; 
     offset4[1][3] = 640; 
-    offset4[1][3] = 480; 
+    offset4[2][3] = 480; 
 #endif
     
 #if 0
