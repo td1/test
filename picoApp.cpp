@@ -1978,7 +1978,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("blend1.txt", "w");
+    matp = fopen("myblend1.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
@@ -2080,7 +2080,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("blend2.txt", "w");
+    matp = fopen("myblend2.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
@@ -2182,7 +2182,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("blend3.txt", "w");
+    matp = fopen("myblend3.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
@@ -2285,7 +2285,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("blend4.txt", "w");
+    matp = fopen("myblend4.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
