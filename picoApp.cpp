@@ -45,15 +45,19 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
     switch (boardID) {
         case ID_TD1:
             sprintf(matrixFN, "unity.txt"); 
+            sprintf(matrixFN, "blend1.txt"); 
             break;
         case ID_TD2:
             sprintf(matrixFN, "tform2.txt"); 
+            sprintf(matrixFN, "blend2.txt");
             break;
         case ID_TD3:
             sprintf(matrixFN, "tform3.txt"); 
+            sprintf(matrixFN, "blend3.txt");
             break;
         case ID_TD4:
             sprintf(matrixFN, "tform4.txt"); 
+            sprintf(matrixFN, "blend4.txt");
             break;
         case ID_TD1W:
         default:
@@ -239,7 +243,7 @@ void picoApp::readMatrix2(char* filename)
     }
     printf("%lf %lf %lf %lf %lf %lf %lf %lf \n", htlx, htly, hblx, hbly, htrx, htry, hbrx, hbry);
         
-    if (!fscanf(matp, "%lf %lf %lf %lf %lf %lf %lf %lf", &vtlx, &vtly, &vtrx, &vtry, &vblx, &vbly, &vbrx, &vbry)) {
+    if (!fscanf(matp, "%lf %lf %lf %lf %lf %lf %lf %lf", &vtlx, &vtly, &vblx, &vbly, &vtrx, &vtry, &vbrx, &vbry)) {
         fputs("Matrix file read error: 8 vertical parameters\n", stderr);
         return;
     }
@@ -852,6 +856,8 @@ void *screenShotGetHomography(void* ptrData)
     double **h4,**h4inv,**offset4;
 
     double *htl, *hbl, *hbr, *htr, *vtl, *vtr, *vbl, *vbr;
+    double *offset5;
+    double **tform1;
 
     h1     = dmatrix(1,3,1,3); // start row,row size,start col,col size 
     h1inv  = dmatrix(1,3,1,3);
@@ -867,15 +873,18 @@ void *screenShotGetHomography(void* ptrData)
     h4inv  = dmatrix(1,3,1,3);
     offset4 = dmatrix(1,3,1,3);
     
-    htl    = dvector(1,2); 
-    hbl    = dvector(1,2);
-    hbr    = dvector(1,2);
-    htr    = dvector(1,2);
+    htl    = dvector(1,3); 
+    hbl    = dvector(1,3);
+    hbr    = dvector(1,3);
+    htr    = dvector(1,3);
 
-    vtl    = dvector(1,2); 
-    vtr    = dvector(1,2);
-    vbl    = dvector(1,2);
-    vbr    = dvector(1,2);
+    vtl    = dvector(1,3); 
+    vtr    = dvector(1,3);
+    vbl    = dvector(1,3);
+    vbr    = dvector(1,3);
+    
+    offset5 = dvector(1,3);
+    tform1  = dmatrix(1,3,1,3);
 
     // inner corners LEFT MID & RIGHT MID
     const double x1[] = {0,87,87,253,253,387,387,553,553};
@@ -1035,7 +1044,7 @@ void *screenShotGetHomography(void* ptrData)
             a1[2*i][9] = Y1[i];
         }
  
-#if 0
+#if 1
         // calculate a1inv for h1inv
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a1inv[2*i-1][1] = -X1[i];
@@ -1105,7 +1114,7 @@ void *screenShotGetHomography(void* ptrData)
             a2inv[2*i][9] = y2[i];
         }
 
-#if 0     
+#if 1     
         // calculate a3 for h3
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a3[2*i-1][1] = -x3[i];
@@ -1152,7 +1161,7 @@ void *screenShotGetHomography(void* ptrData)
             a3inv[2*i][9] = y3[i];
         }
     
-#if 0
+#if 1
         // calculate a4 for h4
         for (i=1; i<= NUMBER_OF_POINTS; i++) {
             a4[2*i-1][1] = -x4[i];
@@ -1259,7 +1268,7 @@ void *screenShotGetHomography(void* ptrData)
     printf("\n");
         
 /////////////////////////////////////////////        
-#if 0 
+#if 1 
         printf("\n A1inv = \n");
         for (i=1; i<=NROW; i++) {
             for (j=1; j<=NCOL; j++) {
@@ -1315,19 +1324,10 @@ void *screenShotGetHomography(void* ptrData)
 	}
         printf("\n");
         
-    
-    /* Write to h1inv.txt */
-    for (i=1; i<=3; i++) {
-        for (j=1; j<=3; j++) {
-            fprintf(matp, "%f ", h1inv[i][j]);
-        }
-    }
-    fclose(matp);
-    
 #endif     
         
 ////////////////////////////////////////////////////////
-#if 0
+#if 1
         printf("\n A2 = \n");
         for (i=1; i<=NROW; i++) {
             for (j=1; j<=NCOL; j++) {
@@ -1417,7 +1417,7 @@ void *screenShotGetHomography(void* ptrData)
 	}
     printf("\n");
 
-#if 0
+#if 1
     /* SET 3 */
     printf("\nA3 = \n");
     for (i=1; i<=NROW; i++) {
@@ -1507,7 +1507,7 @@ void *screenShotGetHomography(void* ptrData)
 	}
     printf("\n");
     
-#if 0
+#if 1
     /* SET 4 */
     printf("\nA4 = \n");
     for (i=1; i<=NROW; i++) {
@@ -1808,6 +1808,7 @@ FILE *matp;
     fclose(matp);
 #endif    
 
+/* HOMOGRAPHY CALCULATION */    
 /* h2invh1o2.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
@@ -1898,41 +1899,422 @@ FILE *matp;
     }
     fclose(matp);
     
+/* BLENDING PARAMETERS CALCULATION */
+
+    /* offset values for blending */
+    for (i=1; i<=3; i++) {
+        offset5[j] = 1;
+    }
     
-    
-    
-    
-    
-    
-    /* HUNG TODO */
-    // Calculate offset values for blending
-    // for (i=1; i<=3; i++) {
-    //      offset3[j] = 0;
-    // }
-    
-    // for set 1, need tform2 = h1inv*h2
-    // for set 2, need tform1 = h2inv*h1
-    // calculate tform1, h2inv*h1 
-    /*
+    /* set 1, (htform) tform1 = h1inv*h2, (vtform) tform2 = h1inv*h3 */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform1[i][j] = 0;
+            tform2[i][j] = 0;
             for (k=1;k<=3;k++) {
-                tform1[i][j] = tform1[i][j] + h2inv[i][k]*h1[k][j];
+                tform1[i][j] = tform1[i][j] + h1inv[i][k]*h2[k][j];
+                tform2[i][j] = tform2[i][j] + h1inv[i][k]*h3[k][j];
             }
         }
     }
-    */
-    
     /* htl */
-    /*
+    offset5[2] = 1; offset5[1] = 1;
     for (i=1; i<3; i++) {
         htl[i] = 0; 
         for (k=1; k<=3; k++) {
-            htl[i] = htl[i] + h2inv[i][k]*h1[k][k];
+            htl[i] = htl[i] + tform1[i][k]*offset5[k];
         }
     }
-    */
+    /* vtl */
+    for (i=1; i<3; i++) {
+        vtl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtl[i] = vtl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbl */
+    offset5[2] = 480; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        hbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbl[i] = hbl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbl */
+    for (i=1; i<3; i++) {
+        vbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbl[i] = vbl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* htr */
+    offset5[2] = 1; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        htr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htr[i] = htr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtr */
+    for (i=1; i<3; i++) {
+        vtr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtr[i] = vtr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbr */
+    offset5[2] = 480; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        hbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbr[i] = hbr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbr */
+    for (i=1; i<3; i++) {
+        vbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbr[i] = vbr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    
+    matp = fopen("blend1.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbr[i]);
+    }
+    /* end Blending Set 1 */
+    
+    /* set 2, (htform) tform1 = h2inv*h1, (vtform) tform2 = h2inv*h4 */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform1[i][j] = 0;
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform1[i][j] = tform1[i][j] + h2inv[i][k]*h1[k][j];
+                tform2[i][j] = tform2[i][j] + h2inv[i][k]*h4[k][j];
+            }
+        }
+    }
+    /* htl */
+    offset5[2] = 1; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        htl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htl[i] = htl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtl */
+    for (i=1; i<3; i++) {
+        vtl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtl[i] = vtl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbl */
+    offset5[2] = 480; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        hbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbl[i] = hbl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbl */
+    for (i=1; i<3; i++) {
+        vbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbl[i] = vbl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* htr */
+    offset5[2] = 1; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        htr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htr[i] = htr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtr */
+    for (i=1; i<3; i++) {
+        vtr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtr[i] = vtr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbr */
+    offset5[2] = 480; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        hbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbr[i] = hbr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbr */
+    for (i=1; i<3; i++) {
+        vbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbr[i] = vbr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    
+    matp = fopen("blend2.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbr[i]);
+    }
+    /* end Blending Set 2 */
+
+    /* set 3, (htform) tform1 = h3inv*h4, (vtform) tform2 = h3inv*h1 */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform1[i][j] = 0;
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform1[i][j] = tform1[i][j] + h3inv[i][k]*h4[k][j];
+                tform2[i][j] = tform2[i][j] + h3inv[i][k]*h1[k][j];
+            }
+        }
+    }
+    /* htl */
+    offset5[2] = 1; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        htl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htl[i] = htl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtl */
+    for (i=1; i<3; i++) {
+        vtl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtl[i] = vtl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbl */
+    offset5[2] = 480; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        hbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbl[i] = hbl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbl */
+    for (i=1; i<3; i++) {
+        vbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbl[i] = vbl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* htr */
+    offset5[2] = 1; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        htr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htr[i] = htr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtr */
+    for (i=1; i<3; i++) {
+        vtr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtr[i] = vtr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbr */
+    offset5[2] = 480; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        hbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbr[i] = hbr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbr */
+    for (i=1; i<3; i++) {
+        vbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbr[i] = vbr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    
+    matp = fopen("blend3.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbr[i]);
+    }
+    fclose(matp);
+    /* end Blending Set 3 */
+   
+    /* set 4, (htform) tform1 = h4inv*h3, (vtform) tform2 = h4inv*h2 */
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            tform1[i][j] = 0;
+            tform2[i][j] = 0;
+            for (k=1;k<=3;k++) {
+                tform1[i][j] = tform1[i][j] + h4inv[i][k]*h3[k][j];
+                tform2[i][j] = tform2[i][j] + h4inv[i][k]*h2[k][j];
+            }
+        }
+    }
+    /* htl */
+    offset5[2] = 1; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        htl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htl[i] = htl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtl */
+    for (i=1; i<3; i++) {
+        vtl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtl[i] = vtl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbl */
+    offset5[2] = 480; offset5[1] = 1;
+    for (i=1; i<3; i++) {
+        hbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbl[i] = hbl[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbl */
+    for (i=1; i<3; i++) {
+        vbl[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbl[i] = vbl[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* htr */
+    offset5[2] = 1; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        htr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            htr[i] = htr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vtr */
+    for (i=1; i<3; i++) {
+        vtr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vtr[i] = vtr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    /* hbr */
+    offset5[2] = 480; offset5[1] = 640;
+    for (i=1; i<3; i++) {
+        hbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            hbr[i] = hbr[i] + tform1[i][k]*offset5[k];
+        }
+    }
+    /* vbr */
+    for (i=1; i<3; i++) {
+        vbr[i] = 0; 
+        for (k=1; k<=3; k++) {
+            vbr[i] = vbr[i] + tform2[i][k]*offset5[k];
+        }
+    }
+    
+    matp = fopen("blend4.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", htr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", hbr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbl[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vtr[i]);
+    }
+    for (i=1; i<3; i++) {
+        fprintf(matp, "%5.5g ", vbr[i]);
+    }
+    fclose(matp);
+    /* end Blending Set 4 */   
     
     /* END OF HOMOGRAPHY CALCULATION HERE */
 
