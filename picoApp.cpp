@@ -236,7 +236,7 @@ void picoApp::readMatrix2(char* filename)
         printf("%lf ", myMatrix[i]);
 
 #ifdef ENABLE_BLENDING
-    printf("htlx,htly,hblx,hbly,hbrx,hbry,htrx,htry : \n");
+    printf("\nhtlx,htly,hblx,hbly,hbrx,hbry,htrx,htry : \n");
     if (!fscanf(matp, "%lf %lf %lf %lf %lf %lf %lf %lf", &htlx, &htly, &hblx, &hbly, &htrx, &htry, &hbrx, &hbry)) {
         fputs("Matrix file read error: 8 horizontal parameters\n", stderr);
         return;
@@ -319,7 +319,7 @@ void picoApp::readMatrix(char* filename)
     for (i=0; i<16; i++)
         printf("%lf ", myMatrix[i]);
 
-    printf("htlx,htly,hblx,hbly,hbrx,hbry,htrx,htry : \n");
+    printf("\nhtlx,htly,hblx,hbly,hbrx,hbry,htrx,htry : \n");
     if (!fscanf(matp, "%lf %lf %lf %lf %lf %lf %lf %lf", &htlx, &htly, &hblx, &hbly, &htrx, &htry, &hbrx, &hbry)) {
         fputs("Matrix file read error: 8 horizontal parameters\n", stderr);
         return;
@@ -1954,6 +1954,7 @@ FILE *matp;
     }
     
     /* set 1, (htform) tform1 = h1inv*h2, (vtform) tform2 = h1inv*h3 */
+    printf("\nset1 tform1 = h1inv*h2, tform2 = h1inv*h3: \n");
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform1[i][j] = 0;
@@ -1961,68 +1962,85 @@ FILE *matp;
             for (k=1;k<=3;k++) {
                 tform1[i][j] = tform1[i][j] + h1inv[i][k]*h2[k][j];
                 tform2[i][j] = tform2[i][j] + h1inv[i][k]*h3[k][j];
-            }
+            }            
+            printf("%lf/%lf ", tform1[i][j],tform2[i][j]);
         }
     }
     /* htl */
+    printf("\nset1 htl = ");
     offset5[2] = 1; offset5[1] = 1;
     for (i=1; i<3; i++) {
         htl[i] = 0; 
         for (k=1; k<=3; k++) {
             htl[i] = htl[i] + tform1[i][k]*offset5[k];
         }
+        printf("%lf ", htl[i]);
     }
     /* vtl */
+    printf("\nset1 vtl = ");
     for (i=1; i<3; i++) {
         vtl[i] = 0; 
         for (k=1; k<=3; k++) {
             vtl[i] = vtl[i] + tform2[i][k]*offset5[k];
         }
+        printf("%lf ", vtl[i]);
     }
     /* hbl */
+    printf("\nset1 hbl = ");
     offset5[2] = 480; offset5[1] = 1;
     for (i=1; i<3; i++) {
         hbl[i] = 0; 
         for (k=1; k<=3; k++) {
             hbl[i] = hbl[i] + tform1[i][k]*offset5[k];
         }
+        printf("%lf ", hbl[i]);
     }
     /* vbl */
+    printf("\nset1 vbl = ");
     for (i=1; i<3; i++) {
         vbl[i] = 0; 
         for (k=1; k<=3; k++) {
             vbl[i] = vbl[i] + tform2[i][k]*offset5[k];
         }
+        printf("%lf ", vbl[i]);
     }
     /* htr */
+    printf("\nset1 htr = ");
     offset5[2] = 1; offset5[1] = 640;
     for (i=1; i<3; i++) {
         htr[i] = 0; 
         for (k=1; k<=3; k++) {
             htr[i] = htr[i] + tform1[i][k]*offset5[k];
         }
+        printf("%lf ", htr[i]);
     }
     /* vtr */
+    printf("\nset1 vtr = ");
     for (i=1; i<3; i++) {
         vtr[i] = 0; 
         for (k=1; k<=3; k++) {
             vtr[i] = vtr[i] + tform2[i][k]*offset5[k];
         }
+        printf("%lf ", vtr[i]);
     }
     /* hbr */
+    printf("\nset1 hbr = ");
     offset5[2] = 480; offset5[1] = 640;
     for (i=1; i<3; i++) {
         hbr[i] = 0; 
         for (k=1; k<=3; k++) {
             hbr[i] = hbr[i] + tform1[i][k]*offset5[k];
         }
+        printf("%lf ", hbr[i]);
     }
     /* vbr */
+    printf("\nset1 vbr = ");
     for (i=1; i<3; i++) {
         vbr[i] = 0; 
         for (k=1; k<=3; k++) {
             vbr[i] = vbr[i] + tform2[i][k]*offset5[k];
         }
+        printf("%lf ", vbr[i]);
     }
     
     matp = fopen("myblend1.txt", "w");
