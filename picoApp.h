@@ -23,6 +23,8 @@ extern "C" {
 }
 
 /* COMPILING SWITCH MODIFICATION */
+#define BYPASS_CAPTURE_HOMOGRAPHY       1
+
 #define HOMOGRAPHY_TRANSFORM_ENABLE     1
 #define DEBUG_HOMOGRAPHY                1
 #define ENABLE_BLENDING                 1

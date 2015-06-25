@@ -715,6 +715,52 @@ void *screenShotGetHomography(void* ptrData)
 
     printf("screenShotGetHomography QRs start...\n");   
 
+#if BYPASS_CAPTURE_HOMOGRAPHY
+        sprintf(systemCmd, "./scan_image sample8qr.png > QRcorners");
+        system(systemCmd);
+
+        fp = fopen("QRcorners", "r");
+        i = j = 0;
+        numQR = 0;
+        while(!feof(fp))
+        {
+            if (fgets(qrstr, 50, fp) != NULL)
+            {
+                // printf("%s\n", qrstr);
+                numstr = strtok(qrstr, ":");
+                // printf("%s\n", numstr);
+                numstr = strtok(NULL, ",");
+                while (numstr != NULL) {
+                    tempNum = atoi(numstr);
+                    // printf("%s\n", numstr);
+                    // printf("j = %d, tempNum= %d\n", j, tempNum);
+
+                    if (j == 0) {
+                        projectorID = tempNum / 100;
+                        projectorFN = tempNum % 100;
+                        qrcorner[i][0] = projectorID;
+                        qrcorner[i][1] = projectorFN % 2;
+                        j = 2;
+                        numQR ++;
+                    }
+                    else {
+                        qrcorner[i][j] = tempNum;
+                        j = j + 1;
+                    }
+                    numstr = strtok(NULL, ",");
+                } 
+                i = i + 1; j = 0; // next QR
+            }
+        }
+        
+        printf("#QRs: %d \n", numQR);
+        
+        printf("qrcorner= ");
+            for (i=0; i<NUMBER_OF_QRCODE; i++)
+                for (j=0; j<10; j++)
+                    printf("%d ", qrcorner[i][j]);
+
+#else
     // not detect all displayed QRs yet (one per each pico set)
     while (doneCaptureQR != true)
     {
@@ -823,6 +869,7 @@ void *screenShotGetHomography(void* ptrData)
 
         }
     }
+#endif
     
     /* START CALCULATE HOMOGRAPHY */
     printf("\n***** Got QR codes, start calculate the homography\n");
