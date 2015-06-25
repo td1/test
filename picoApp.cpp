@@ -1008,10 +1008,10 @@ void *screenShotGetHomography(void* ptrData)
     
     /* a matrix */
     a1 = dmatrix(1,NROW,1,NCOL); // mxn 
-    //a2 = dmatrix(1,NROW,1,NCOL); // mxn 
-    //a3 = dmatrix(1,NROW,1,NCOL); // mxn 
-    //a4 = dmatrix(1,NROW,1,NCOL); // mxn 
-    //a1inv = dmatrix(1,NROW,1,NCOL); // mxn 
+    a2 = dmatrix(1,NROW,1,NCOL); // mxn 
+    a3 = dmatrix(1,NROW,1,NCOL); // mxn 
+    a4 = dmatrix(1,NROW,1,NCOL); // mxn 
+    a1inv = dmatrix(1,NROW,1,NCOL); // mxn 
     a2inv = dmatrix(1,NROW,1,NCOL); // mxn 
     a3inv = dmatrix(1,NROW,1,NCOL); // mxn 
     a4inv = dmatrix(1,NROW,1,NCOL); // mxn 
