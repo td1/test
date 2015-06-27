@@ -1815,8 +1815,26 @@ FILE *matp;
     fclose(matp);
 #endif    
 
-/* HOMOGRAPHY CALCULATION */    
-/* h2invh1o2.txt */
+/* HOMOGRAPHY CALCULATION */  
+/* myblend1.txt : unity */    
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            otform2[i][j] = 0;
+        }
+    }
+    otform2[1][1] = otform2[2][2] = otform2[3][3] = 1;
+    matp = fopen("myblend1.txt", "w");
+    if (matp == NULL) {
+        exit -1;
+    }
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            fprintf(matp, "%5.5g ", otform2[i][j]);
+        }
+    }
+    fclose(matp);
+    
+/* myblend2.txt combined h2invh1o2.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform2[i][j] = 0;
@@ -1835,7 +1853,8 @@ FILE *matp;
             }
         }
     }
-    matp = fopen("h2invh1o2.txt", "w");
+    // matp = fopen("h2invh1o2.txt", "w");
+    matp = fopen("myblend2.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
@@ -1846,7 +1865,7 @@ FILE *matp;
     }
     fclose(matp);
     
-/* h3invh1o3.txt */
+/* myblend3.txt combined h3invh1o3.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform2[i][j] = 0;
@@ -1865,7 +1884,8 @@ FILE *matp;
             }
         }
     }
-    matp = fopen("h3invh1o3.txt", "w");
+    // matp = fopen("h3invh1o3.txt", "w");
+    matp = fopen("myblend3.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
@@ -1876,7 +1896,7 @@ FILE *matp;
     }
     fclose(matp);
     
-/* h4invh1o4.txt */
+/* myblend4.txt combined h4invh1o4.txt */
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform2[i][j] = 0;
@@ -1895,7 +1915,8 @@ FILE *matp;
             }
         }
     }
-    matp = fopen("h4invh1o4.txt", "w");
+    // matp = fopen("h4invh1o4.txt", "w");
+    matp = fopen("myblend4.txt", "w");
     if (matp == NULL) {
         exit -1;
     }
@@ -2004,7 +2025,7 @@ FILE *matp;
         printf("%lf ", vbr[i]);
     }
     
-    matp = fopen("myblend1.txt", "w");
+    matp = fopen("myblend1.txt", "a");
     if (matp == NULL) {
         exit -1;
     }
@@ -2108,7 +2129,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("myblend2.txt", "w");
+    matp = fopen("myblend2.txt", "a");
     if (matp == NULL) {
         exit -1;
     }
@@ -2211,7 +2232,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("myblend3.txt", "w");
+    matp = fopen("myblend3.txt", "a");
     if (matp == NULL) {
         exit -1;
     }
@@ -2315,7 +2336,7 @@ FILE *matp;
         }
     }
     
-    matp = fopen("myblend4.txt", "w");
+    matp = fopen("myblend4.txt", "a");
     if (matp == NULL) {
         exit -1;
     }
