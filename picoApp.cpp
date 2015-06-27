@@ -969,84 +969,84 @@ void *screenShotGetHomography(void* ptrData)
         if (qrcorner[i][0] == 1) {
             X1[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** set1 LEFT corner \n");
+                // printf("\n*** set1 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X1[j] = qrcorner[i][2*j];
-                    printf("%lf ", X1[j]);
+                    // printf("%lf ", X1[j]);
                     Y1[j] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y1[j]);
+                    // printf("%lf ", Y1[j]);
                 }
             }
             else {
-                printf("\n*** set1 RIGHT corner \n");
+                // printf("\n*** set1 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X1[j+4] = qrcorner[i][2*j];
-                    printf("%lf ", X1[j+4]);
+                    // printf("%lf ", X1[j+4]);
                     Y1[j+4] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y1[j+4]);
+                    // printf("%lf ", Y1[j+4]);
                 }
             }
         }
         else if (qrcorner[i][0] == 2) {
             X2[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** set2 LEFT corner \n");
+                // printf("\n*** set2 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X2[j] = qrcorner[i][2*j];
-                    printf("%lf ", X2[j]);
+                    // printf("%lf ", X2[j]);
                     Y2[j] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y2[j]);
+                    // printf("%lf ", Y2[j]);
                 }
             }
             else {
-                printf("\n*** set2 RIGHT corner \n");
+                // printf("\n*** set2 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X2[j+4] = qrcorner[i][2*j];
-                    printf("%lf ", X2[j+4]);
+                    // printf("%lf ", X2[j+4]);
                     Y2[j+4] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y2[j+4]);
+                    // printf("%lf ", Y2[j+4]);
                 }
             }
         }
         else if (qrcorner[i][0] == 3) {
             X3[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** set3 LEFT corner \n");
+                // printf("\n*** set3 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X3[j] = qrcorner[i][2*j];
-                    printf("%lf ", X3[j]);
+                    // printf("%lf ", X3[j]);
                     Y3[j] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y3[j]);
+                    // printf("%lf ", Y3[j]);
                 }
             }
             else {
-                printf("\n*** set3 RIGHT corner \n");
+                // printf("\n*** set3 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X3[j+4] = qrcorner[i][2*j];
-                    printf("%lf ", X3[j+4]);
+                    // printf("%lf ", X3[j+4]);
                     Y3[j+4] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y3[j+4]);
+                    // printf("%lf ", Y3[j+4]);
                 }
             }
         }
         else if (qrcorner[i][0] == 4) {
             X4[0] = 1; /* detected valid QR code */
             if (qrcorner[i][1] == 0) {
-                printf("\n*** set4 LEFT corner \n");
+                // printf("\n*** set4 LEFT corner \n");
                 for (j=1; j<=4; j++) {
                     X4[j] = qrcorner[i][2*j];
-                    printf("%lf ", X4[j]);
+                    // printf("%lf ", X4[j]);
                     Y4[j] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y4[j]);
+                    // printf("%lf ", Y4[j]);
                 }
             }
             else {
-                printf("\n*** set4 RIGHT corner \n");
+                // printf("\n*** set4 RIGHT corner \n");
                 for (j=1; j<=4; j++) {
                     X4[j+4] = qrcorner[i][2*j];
-                    printf("%lf ", X4[j+4]);
+                    // printf("%lf ", X4[j+4]);
                     Y4[j+4] = qrcorner[i][2*j+1];
-                    printf("%lf ", Y4[j+4]);
+                    // printf("%lf ", Y4[j+4]);
                 }
             }
         }
@@ -1258,14 +1258,13 @@ void *screenShotGetHomography(void* ptrData)
     
     ////////////////////////////////////////////////////////////////   
     /* SET 1 h1 and h1inv */
-    printf("\nA1 = \n");
+    // printf("\nA1 = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
             u[i][j] = a1[i][j];
-            printf("%5.0lf ", u[i][j]);    
+            // printf("%5.0lf ", u[i][j]);    
         }
-            printf("\n");
-            // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+            // printf("\n");
     }
 	svdcmp(u,NROW,NCOL,w,v);
     /* Sort the singular values in descending order */
@@ -1285,150 +1284,121 @@ void *screenShotGetHomography(void* ptrData)
         }
 	}
         
-        /*
-        for (i=1; i<=NCOL; i++) {
-            printf("        S[%d]    = %lf\n", i, w[i]);
-	}
-        for (i=1; i<=NROW; i++) {
-            printf("        U[%d]    = %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", i, u[i][1], u[i][2], u[i][3], u[i][4], u[i][5], u[i][6], u[i][7], u[i][8], u[i][9]);
-	}
-        for (i=1; i<=NCOL; i++) {
-            printf("        V[%d]    = %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", i, v[i][1], v[i][2], v[i][3], v[i][4], v[i][5], v[i][6], v[i][7], v[i][8], v[i][9]);
-	}
-         */
-        for (i=1; i<=NCOL; i++) {
-            h[i] = v[i][9];
-            // printf("        h[%d]    = %lf\n", i, h[i]);
-	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = h[i]/h[9];
-            // printf("        H[%d]    = %lf\n", i, h[i]);
-	}
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+        // printf("        h[%d]    = %lf\n", i, h[i]); 
+    }
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+        // printf("        H[%d]    = %lf\n", i, h[i]);
+    }
 
-        printf("h1 = ");
-        for (i=1; i<=3; i++) {
-            for (j=1; j<=3; j++) {
-                h1[i][j] = h[j+3*i-3];
-                printf("%lf ", h1[i][j]);
-            }
+    printf("h1 = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h1[i][j] = h[j+3*i-3];
+            printf("%lf ", h1[i][j]);
+        }
 	}
     printf("\n");
         
-/////////////////////////////////////////////        
-#if 1 
-        printf("\n A1inv = \n");
-        for (i=1; i<=NROW; i++) {
-            for (j=1; j<=NCOL; j++) {
-                u[i][j] = a1inv[i][j];
-                printf("%5.0lf ", u[i][j]);    
-            }
-            printf("\n");
-            // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
-	}
+    // printf("\n A1inv = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a1inv[i][j];
+            // printf("%5.0lf ", u[i][j]);    
+        }
+        // printf("\n");
+        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+    }
 	svdcmp(u,NROW,NCOL,w,v);
         
 	/* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
-            for (j=i+1; j<=NCOL; j++) {
-		if (w[i]<w[j]) {
-                    t = w[i];
-                    w[i] = w[j];
-                    w[j] = t;
-                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
-                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
-                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
-                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
-                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
-                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
-		}
+        for (j=i+1; j<=NCOL; j++) {
+            if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
             }
+        }
 	}
-        /*
-        for (i=1; i<=NCOL; i++) {
-            printf("        S1[%d]    = %lf\n", i, w[i]);
-	}
-        for (i=1; i<=NROW; i++) {
-            printf("        U1[%d]    = %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", i, u[i][1], u[i][2], u[i][3], u[i][4], u[i][5], u[i][6], u[i][7], u[i][8], u[i][9]);
-	}
-        for (i=1; i<=NCOL; i++) {
-            printf("        V1[%d]    = %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", i, v[i][1], v[i][2], v[i][3], v[i][4], v[i][5], v[i][6], v[i][7], v[i][8], v[i][9]);
-	}
-        */
-        for (i=1; i<=NCOL; i++) {
-            h[i] = v[i][9];
-            // printf("        h[%d]    = %lf\n", i, h[i]);
-	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = h[i]/h[9];
-            // printf("        H[%d]    = %lf\n", i, h[i]);
-	}
-        printf("h1inv = ");
-        for (i=1; i<=3; i++) {
-            for (j=1; j<=3; j++) {
-                h1inv[i][j] = h[j+3*i-3];
-                printf("%lf ", h1inv[i][j]);
-            }
-	}
-        printf("\n");
         
-#endif     
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+        // printf("        h[%d]    = %lf\n", i, h[i]);
+	}
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+        // printf("        H[%d]    = %lf\n", i, h[i]);
+	}
+    printf("h1inv = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h1inv[i][j] = h[j+3*i-3];
+            printf("%lf ", h1inv[i][j]);
+        }
+	}
+    printf("\n");
         
 ////////////////////////////////////////////////////////
-#if 1
-        printf("\n A2 = \n");
-        for (i=1; i<=NROW; i++) {
-            for (j=1; j<=NCOL; j++) {
-                u[i][j] = a2[i][j];
-                printf("%5.0lf ", u[i][j]);    
-            }
-            printf("\n");
-            // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+    // printf("\n A2 = \n");
+    for (i=1; i<=NROW; i++) {
+        for (j=1; j<=NCOL; j++) {
+            u[i][j] = a2[i][j];
+            // printf("%5.0lf ", u[i][j]);    
+        }
+        // printf("\n");
 	}
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
 	for (i=1; i<NCOL; i++) {
-            for (j=i+1; j<=NCOL; j++) {
-		if (w[i]<w[j]) {
-                    t = w[i];
-                    w[i] = w[j];
-                    w[j] = t;
-                    for (k=1; k<=NROW; k++) t1[k] = u[k][i];
-                    for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
-                    for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
-                    for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
-                    for (k=1; k<=NROW; k++) u[k][j] = t1[k];
-                    for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
-		}
+        for (j=i+1; j<=NCOL; j++) {
+            if (w[i]<w[j]) {
+                t = w[i];
+                w[i] = w[j];
+                w[j] = t;
+                for (k=1; k<=NROW; k++) t1[k] = u[k][i];
+                for (k=1; k<=NCOL; k++) t2[k] = v[k][i];
+                for (k=1; k<=NROW; k++) u[k][i] = u[k][j];
+                for (k=1; k<=NCOL; k++) v[k][i] = v[k][j];
+                for (k=1; k<=NROW; k++) u[k][j] = t1[k];
+                for (k=1; k<=NCOL; k++) v[k][j] = t2[k];
             }
+        }
 	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = v[i][9];
-            // printf("        h[%d]    = %lf\n", i, h[i]);
-	}
-        for (i=1; i<=NCOL; i++) {
-            h[i] = h[i]/h[9];
-            // printf("        H[%d]    = %lf\n", i, h[i]);
-	}
+    for (i=1; i<=NCOL; i++) {
+        h[i] = v[i][9];
+        // printf("        h[%d]    = %lf\n", i, h[i]);
+    }
+    for (i=1; i<=NCOL; i++) {
+        h[i] = h[i]/h[9];
+        // printf("        H[%d]    = %lf\n", i, h[i]);
+    }
 
-        printf("h2 = ");
-        for (i=1; i<=3; i++) {
-            for (j=1; j<=3; j++) {
-                h2[i][j] = h[j+3*i-3];
-                printf("%lf ", h2[i][j]);
-            }
-	}
-        printf("\n");
-#endif
+    printf("h2 = ");
+    for (i=1; i<=3; i++) {
+        for (j=1; j<=3; j++) {
+            h2[i][j] = h[j+3*i-3];
+            printf("%lf ", h2[i][j]);
+        }
+    }
+    printf("\n");
         
-/* A2inv */
-    printf("\n A2inv = \n");
+    /* A2inv */
+    // printf("\n A2inv = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
             u[i][j] = a2inv[i][j];
-            printf("%5.0lf ", u[i][j]);    
+            // printf("%5.0lf ", u[i][j]);    
         }
-        printf("\n");
-        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+        // printf("\n");
 	}
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
@@ -1464,16 +1434,14 @@ void *screenShotGetHomography(void* ptrData)
 	}
     printf("\n");
 
-#if 1
     /* SET 3 */
-    printf("\nA3 = \n");
+    // printf("\nA3 = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
             u[i][j] = a3[i][j];
-                printf("%5.0lf ", u[i][j]);    
+            // printf("%5.0lf ", u[i][j]);    
         }
-        printf("\n");
-        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+        // printf("\n");
     }
 	svdcmp(u,NROW,NCOL,w,v);
     /* Sort the singular values in descending order */
@@ -1508,17 +1476,15 @@ void *screenShotGetHomography(void* ptrData)
         }
 	}
     printf("\n");    
-#endif
 
-/* A3inv */
-    printf("\n A3inv = \n");
+    /* A3inv */
+    // printf("\n A3inv = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
             u[i][j] = a3inv[i][j];
-            printf("%5.0lf ", u[i][j]);    
+            // printf("%5.0lf ", u[i][j]);    
         }
-        printf("\n");
-        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+        // printf("\n");
 	}
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
@@ -1554,16 +1520,14 @@ void *screenShotGetHomography(void* ptrData)
 	}
     printf("\n");
     
-#if 1
     /* SET 4 */
-    printf("\nA4 = \n");
+    // printf("\nA4 = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
             u[i][j] = a4[i][j];
-                printf("%5.0lf ", u[i][j]);    
+            // printf("%5.0lf ", u[i][j]);    
         }
-        printf("\n");
-        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+        // printf("\n");
     }
 	svdcmp(u,NROW,NCOL,w,v);
     /* Sort the singular values in descending order */
@@ -1598,17 +1562,15 @@ void *screenShotGetHomography(void* ptrData)
         }
 	}
     printf("\n");        
-#endif     
 
-/* A4inv */
-    printf("\n A4inv = \n");
+    /* A4inv */
+    // printf("\n A4inv = \n");
     for (i=1; i<=NROW; i++) {
         for (j=1; j<=NCOL; j++) {
             u[i][j] = a4inv[i][j];
-            printf("%5.0lf ", u[i][j]);    
+            // printf("%5.0lf ", u[i][j]);    
         }
-        printf("\n");
-        // printf("%5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf %5.0lf\n",u[i][1],u[i][2],u[i][3],u[i][4],u[i][5],u[i][6],u[i][7],u[i][8],u[i][9]);
+        // printf("\n");
 	}
 	svdcmp(u,NROW,NCOL,w,v);
 	/* Sort the singular values in descending order */
@@ -1644,8 +1606,6 @@ void *screenShotGetHomography(void* ptrData)
 	}
     printf("\n");
 
-
-    
     /******************************************************************************/
     /* Write to text files                                                        */    
     /******************************************************************************/
@@ -1950,7 +1910,7 @@ FILE *matp;
 
     /* offset values for blending */
     for (i=1; i<=3; i++) {
-        offset5[j] = 1;
+        offset5[i] = 1;
     }
     
     /* set 1, (htform) tform1 = h1inv*h2, (vtform) tform2 = h1inv*h3 */
@@ -1966,6 +1926,7 @@ FILE *matp;
             printf("%lf/%lf ", tform1[i][j],tform2[i][j]);
         }
     }
+    
     /* htl */
     printf("\nset1 htl = ");
     offset5[2] = 1; offset5[1] = 1;
@@ -2072,8 +2033,10 @@ FILE *matp;
         fprintf(matp, "%5.5g ", vbr[i]);
     }
     /* end Blending Set 1 */
+
     
     /* set 2, (htform) tform1 = h2inv*h1, (vtform) tform2 = h2inv*h4 */
+    // printf("\nset2 tform1 = h2inv*h1, tform2 = h2inv*h4: \n");
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform1[i][j] = 0;
@@ -2176,6 +2139,7 @@ FILE *matp;
     /* end Blending Set 2 */
 
     /* set 3, (htform) tform1 = h3inv*h4, (vtform) tform2 = h3inv*h1 */
+    // printf("\nset3 tform1 = h3inv*h4, tform2 = h3inv*h1: \n");
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform1[i][j] = 0;
@@ -2279,6 +2243,7 @@ FILE *matp;
     /* end Blending Set 3 */
    
     /* set 4, (htform) tform1 = h4inv*h3, (vtform) tform2 = h4inv*h2 */
+    // printf("\nset4 tform4 = h4inv*h3, tform2 = h4inv*h2: \n");
     for (i=1; i<=3; i++) {
         for (j=1; j<=3; j++) {
             tform1[i][j] = 0;
@@ -2382,8 +2347,11 @@ FILE *matp;
     /* end Blending Set 4 */   
     
     /* END OF HOMOGRAPHY CALCULATION HERE */
-
+#if BYPASS_CAPTURE_HOMOGRAPHY
+    tdata->time2wait = 0; 
+#else
     tdata->time2wait = WAIT_AFTER_DONE_GET_HOMOGRAPHY; // WAIT FOR ANOTHER CATCH UP
+#endif
     tdata->shotAnalyzed = 1;
     return tdata;
 }
