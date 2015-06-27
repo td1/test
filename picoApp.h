@@ -23,7 +23,8 @@ extern "C" {
 }
 
 /* COMPILING SWITCH MODIFICATION */
-#define BYPASS_CAPTURE_HOMOGRAPHY       1
+// #define BYPASS_CAPTURE_HOMOGRAPHY       1 /* workspace: enable this line */
+// #define BYPASS_CAPTURE_SYNC             1 /* workspace: enable this line */
 
 #define HOMOGRAPHY_TRANSFORM_ENABLE     1
 #define DEBUG_HOMOGRAPHY                1

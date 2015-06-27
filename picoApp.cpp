@@ -44,19 +44,19 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
 #ifdef USE_COMMON_HOMOGRAPHY	
     switch (boardID) {
         case ID_TD1:
-            sprintf(matrixFN, "unity.txt"); 
+            // sprintf(matrixFN, "unity.txt"); 
             sprintf(matrixFN, "blend1.txt"); 
             break;
         case ID_TD2:
-            sprintf(matrixFN, "tform2.txt"); 
+            // sprintf(matrixFN, "tform2.txt"); 
             sprintf(matrixFN, "blend2.txt");
             break;
         case ID_TD3:
-            sprintf(matrixFN, "tform3.txt"); 
+            // sprintf(matrixFN, "tform3.txt"); 
             sprintf(matrixFN, "blend3.txt");
             break;
         case ID_TD4:
-            sprintf(matrixFN, "tform4.txt"); 
+            // sprintf(matrixFN, "tform4.txt"); 
             sprintf(matrixFN, "blend4.txt");
             break;
         case ID_TD1W:
@@ -85,7 +85,12 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
     
     readMatrix2(matrixFN);
 
+#if BYPASS_CAPTURE_SYNC
+    printf("\n>>>>> BYPASS CAPTURE SYNC, MYID = %d \n", boardID);
+#else
     syncVideo(boardID);
+#endif
+
 	consoleListener.setup(this);
     ofSetFrameRate(30);
 
@@ -93,6 +98,7 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
 	omxPlayer.loadMovie(videoPath); 
 	width = omxPlayer.getWidth();
     height = omxPlayer.getHeight();
+    printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
     if (width != WIDTH || height != HEIGHT) {
         printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
     }
