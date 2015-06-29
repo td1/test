@@ -137,7 +137,7 @@ void picoApp::draw(){
     unsigned char *pixels = omxPlayer.getPixels();
     nChannels = 4; // omxPlayer.getPixelsRef().getNumChannels();
    
-#ifdef ENABLE_BLENDING    
+#if ENABLE_BLENDING    
     // calculate fading factors
     if ((boardID % 2) == 0) { // boardID = 2,4
         for (i=0; i<height; i++) {             
@@ -163,7 +163,7 @@ void picoApp::draw(){
     }
 #endif
 
-#ifdef HOMOGRAPHY_TRANSFORM_ENABLE
+#if HOMOGRAPHY_TRANSFORM_ENABLE
     pixelOutput.loadData(pixels, width, height, GL_RGBA);
     glPushMatrix();
     glMultMatrixf(myMatrix);
@@ -2891,7 +2891,7 @@ void picoApp::calFading(void)
             w = matrix[2][0] * j + matrix[2][1] * i + matrix[2][2];
             x = (int)((matrix[0][0] * j + matrix[0][1] * i + matrix[0][2])/w);
             y = (int)((matrix[1][0] * j + matrix[1][1] * i + matrix[1][2])/w);
-            // printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
+            printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
 
             if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT) {
                 if (j >= getLeftX(i) && j <= getRightX(i)) {
@@ -2900,7 +2900,7 @@ void picoApp::calFading(void)
                         xfadeMat[i][j] = xfade*256;
                     else
                         xfadeMat[i][j] = 255;
-                    // printf("xfadeMat[%d %d]=%d", i,j,xfadeMat[i][j]);
+                    printf("xfadeMat[%d %d]=%d", i,j,xfadeMat[i][j]);
                 }
             }
         }
