@@ -118,6 +118,7 @@ public:
         int xOverlapLeft[HEIGHT];
         int xOverlapRight[HEIGHT];
         unsigned char xfadeMat[HEIGHT][WIDTH];
+        unsigned char yfadeMat[HEIGHT][WIDTH];
         float matrix[3][3];      
         
         double h1[9];      

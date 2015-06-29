@@ -143,7 +143,8 @@ void picoApp::draw(){
    
 #if ENABLE_BLENDING    
     // calculate fading factors
-    if ((boardID % 2) == 0) { // boardID = 2,4
+    // if ((boardID % 2) == 0) { // boardID = 2,4
+    if (fadeRight == false) { // boardID = 2,4
         for (i=0; i<height; i++) {             
             for (j=0; j<xOverlapRight[i]; j++) {    
                 var1 = (i*WIDTH + j)*nChannels;
@@ -157,6 +158,30 @@ void picoApp::draw(){
     else {
         for (i=0; i<height; i++) {             
             for (j=xOverlapLeft[i]; j<width; j++) {    
+                var1 = (i*WIDTH + j)*nChannels;
+                for (k=0; k<3; k++) {
+                    var2 = pixels[var1+k]*xfadeMat[i][j];
+                    pixels[var1+k] = var2/256; 
+                }
+            }        
+        }
+    }
+    
+    // vertical blending
+    if (fadeDown == true) { // boardID = 1,2
+        for (j=0; j<width; j++) {    
+            for (i=yOverlapTop[j]; i<height; i++) {             
+                var1 = (i*WIDTH + j)*nChannels;
+                for (k=0; k<3; k++) {
+                    var2 = pixels[var1+k]*yfadeMat[i][j];
+                    pixels[var1+k] = var2/256; 
+                }
+            }        
+        }
+    }
+    else { // boardID = 3,4
+        for (j=0; j<width; j++) {    
+            for (i=0; i<yOverlapBottom[j]; i++) {             
                 var1 = (i*WIDTH + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*xfadeMat[i][j];
@@ -434,7 +459,7 @@ double picoApp::getXFade(int x, int y)
     /* add gamma correction */
     gamma = 2.2;
     result2 = pow(result,1/gamma);
-    printf("getXFade: %lf\n", result2);
+    // printf("getXFade: %lf\n", result2);
     return (result2 >= 0 && result2 <= 1)? result2:1;
     #else
     return result;
@@ -2895,7 +2920,7 @@ void picoApp::calFading(void)
             w = matrix[2][0] * j + matrix[2][1] * i + matrix[2][2];
             x = (int)((matrix[0][0] * j + matrix[0][1] * i + matrix[0][2])/w);
             y = (int)((matrix[1][0] * j + matrix[1][1] * i + matrix[1][2])/w);
-            printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
+            // printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
 
             if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT) {
                 if (j >= getLeftX(i) && j <= getRightX(i)) {
@@ -2904,7 +2929,16 @@ void picoApp::calFading(void)
                         xfadeMat[i][j] = xfade*256;
                     else
                         xfadeMat[i][j] = 255;
-                    printf("xfadeMat[%d %d]=%d", i,j,xfadeMat[i][j]);
+                    // printf("xfadeMat[%d %d]=%d", i,j,xfadeMat[i][j]);
+                }
+                
+                if (i >= getTopY(j) && i <= getBottomY(j)) {
+                    yfade = getYFade(j,i);
+                    if (yfade < 1) 
+                        yfadeMat[i][j] = yfade*256;
+                    else
+                        yfadeMat[i][j] = 255;
+                    // printf("yfade=%lf\n", yfade);
                 }
             }
         }
