@@ -85,6 +85,10 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
     
     readMatrix2(matrixFN);
 
+#if ENABLE_BLENDING
+    calFading();
+#endif        
+        
 #if BYPASS_CAPTURE_SYNC
     printf("\n>>>>> BYPASS CAPTURE SYNC, MYID = %d \n", boardID);
 #else
