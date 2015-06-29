@@ -12,7 +12,7 @@ void picoApp::setup()
     string videoPath = ofToDataPath("./bunny1.mp4", true);
 	boardID = ID_TD1;
     fadeRight = true;
-    fadeDown = false;
+    fadeDown = true;
 #elif TD2 
     string videoPath = ofToDataPath("./bunny2.mp4", true);
     boardID = ID_TD2;
@@ -21,13 +21,13 @@ void picoApp::setup()
 #elif TD3 
     string videoPath = ofToDataPath("./bunny3.mp4", true);
     boardID = ID_TD3;
-    fadeRight = false;
-    fadeDown = true;
+    fadeRight = true;
+    fadeDown = false;
 #elif TD4 
     string videoPath = ofToDataPath("./bunny4.mp4", true);
     boardID = ID_TD4;
     fadeRight = false;
-    fadeDown = true;
+    fadeDown = false;
 #else 
     string videoPath = ofToDataPath("./bunny1.mp4", true);
 	boardID = ID_TD1W;
@@ -430,7 +430,7 @@ double picoApp::getXFade(int x, int y)
     /* add gamma correction */
     gamma = 2.2;
     result2 = pow(result,1/gamma);
-    // printf("getXFade: %lf\n", result2);
+    printf("getXFade: %lf\n", result2);
     return (result2 >= 0 && result2 <= 1)? result2:1;
     #else
     return result;
