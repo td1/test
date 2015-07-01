@@ -23,9 +23,6 @@ extern "C" {
 }
 
 /* COMPILING SWITCH MODIFICATION */
-// #define BYPASS_CAPTURE_HOMOGRAPHY       1 /* workspace: enable this line */
-// #define BYPASS_CAPTURE_SYNC             1 /* workspace: enable this line */
-
 #define HOMOGRAPHY_TRANSFORM_ENABLE     1
 #define DEBUG_HOMOGRAPHY                1
 #define ENABLE_BLENDING                 1
@@ -36,7 +33,6 @@ extern "C" {
 #define ID_TD2              2
 #define ID_TD3              3
 #define ID_TD4              4
-#define ID_TD1W             5
 
 #define MAX_PICO_SET        4   // Four PICO sets
 #define NUMBER_OF_QRCODE    8   // getHomography - screenCapture two QRs code each set, x98 and x99

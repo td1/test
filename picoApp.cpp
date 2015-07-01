@@ -30,7 +30,7 @@ void picoApp::setup()
     fadeDown = false;
 #else 
     string videoPath = ofToDataPath("./bunny1.mp4", true);
-	boardID = ID_TD1W;
+    boardID = ID_TD1;
     fadeRight = true;
     fadeDown = false;
 #endif
@@ -59,9 +59,9 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
             // sprintf(matrixFN, "tform4.txt"); 
             sprintf(matrixFN, "blend4.txt");
             break;
-        case ID_TD1W:
         default:
-            sprintf(matrixFN, "unity.txt"); 
+            // sprintf(matrixFN, "unity.txt"); 
+            sprintf(matrixFN, "blend1.txt"); 
     }
 #else
     switch (boardID) {
@@ -77,7 +77,6 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
         case ID_TD4:
             sprintf(matrixFN, "o4h1invh4.txt"); 
             break;
-        case ID_TD1W:
         default:
             sprintf(matrixFN, "unity.txt"); 
     }
