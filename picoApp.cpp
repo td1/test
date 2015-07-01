@@ -470,7 +470,7 @@ double picoApp::getYFade(int x, int y)
     double y1,y2,result;
     double gamma, result2;
 
-    if(!fadeDown)	// Projector 1, 2
+    if(fadeDown == true)	// Projector 1, 2
     {
             y2 = getBottomY(x)-y;
             y1 = y - getTopY(x);
