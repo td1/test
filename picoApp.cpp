@@ -149,7 +149,7 @@ void picoApp::draw(){
     // calculate fading factors
     // if ((boardID % 2) == 0) { // boardID = 2,4
     if (fadeRight == false) { // boardID = 2,4
-        for (i=0; i<height; i++) {             
+        for (i=0; i<HEIGHT; i++) {             
             for (j=0; j<xOverlapRight[i]; j++) {    
                 var1 = (i*WIDTH + j)*nChannels;
                 for (k=0; k<3; k++) {
@@ -160,8 +160,8 @@ void picoApp::draw(){
         }
     }
     else {
-        for (i=0; i<height; i++) {             
-            for (j=xOverlapLeft[i]; j<width; j++) {    
+        for (i=0; i<HEIGHT; i++) {             
+            for (j=xOverlapLeft[i]; j<WIDTH; j++) {    
                 var1 = (i*WIDTH + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*xfadeMat[i][j];
@@ -173,8 +173,8 @@ void picoApp::draw(){
     
     // vertical blending
     if (fadeDown == true) { // boardID = 1,2
-        for (j=0; j<width; j++) {    
-            for (i=yOverlapTop[j]; i<height; i++) {             
+        for (j=0; j<WIDTH; j++) {    
+            for (i=yOverlapTop[j]; i<HEIGHT; i++) {             
                 var1 = (i*WIDTH + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*yfadeMat[i][j];
@@ -184,11 +184,11 @@ void picoApp::draw(){
         }
     }
     else { // boardID = 3,4
-        for (j=0; j<width; j++) {    
+        for (j=0; j<WIDTH; j++) {    
             for (i=0; i<yOverlapBottom[j]; i++) {             
                 var1 = (i*WIDTH + j)*nChannels;
                 for (k=0; k<3; k++) {
-                    var2 = pixels[var1+k]*xfadeMat[i][j];
+                    var2 = pixels[var1+k]*yfadeMat[i][j];
                     pixels[var1+k] = var2/256; 
                 }
             }        
@@ -459,7 +459,7 @@ double picoApp::getXFade(int x, int y)
     // remove adjustment result = ((x2+0.5*x1)/(x2+x1));
     result = x2/(x2+x1);
 
-    #if 1 // turn on option to do gamma correction
+    #if 0 // turn on option to do gamma correction
     /* add gamma correction */
     gamma = 2.2;
     result2 = pow(result,1/gamma);
@@ -487,6 +487,7 @@ double picoApp::getYFade(int x, int y)
     }
     result = ((y2)/(y2+y1));
 
+#if 0
     /* add gamma correction */
     gamma = 2.2;
     result2 = pow(result,1/gamma);
@@ -502,6 +503,9 @@ double picoApp::getYFade(int x, int y)
     cout << "Factor: " << result << endl;*/
     }
     return (result >= 0 && result <= 1) ? result2 : 1;
+#else
+    return result;
+#endif
 }
 
 /* allocate a double matrix with subscript range m[nrl..nrh][ncl..nch] */
@@ -2942,7 +2946,7 @@ void picoApp::calFading(void)
                         yfadeMat[i][j] = yfade*256;
                     else
                         yfadeMat[i][j] = 255;
-                    // printf("yfade=%lf\n", yfade);
+                    // printf("%d %d = %lf %d   ", i, j, yfade, yfadeMat[i][j]);
                 }
             }
         }
