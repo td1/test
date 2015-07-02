@@ -7,7 +7,11 @@ void picoApp::setup()
 	doSaveImage = false;
 	doUpdatePixels = true;
     startPlayVideo = false;
-        
+    
+    boardID = myboardID;
+    printf("passing boardID = %d\n", myboardID);
+    
+/* currently still using ID defined at myID.h */    
 #ifdef TD1        
     string videoPath = ofToDataPath("./bunny1.mp4", true);
 	boardID = ID_TD1;
@@ -94,6 +98,7 @@ videoPath = ofToDataPath("./testpattern.mp4", true);
     syncVideo(boardID);
 #endif
 
+    ofBackground(0,0,0);
 	consoleListener.setup(this);
     ofSetFrameRate(30);
 

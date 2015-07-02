@@ -64,6 +64,8 @@ static int iminarg1,iminarg2;
 #define IMIN(a,b) (iminarg1=(a),iminarg2=(b),(iminarg1) < (iminarg2) ?\
 (iminarg1) : (iminarg2))
 
+static int myboardID;
+
 class picoApp : public ofBaseApp, public SSHKeyListener{
 	
 public:
