@@ -13,27 +13,27 @@ void picoApp::setup()
     
 /* currently still using ID defined at myID.h */    
 #ifdef TD1        
-    string videoPath = ofToDataPath("./bunny1.mp4", true);
+    string videoPath = ofToDataPath("./obunny1.mp4", true);
 	boardID = ID_TD1;
     fadeRight = true;
     fadeDown = true;
 #elif TD2 
-    string videoPath = ofToDataPath("./bunny2.mp4", true);
+    string videoPath = ofToDataPath("./obunny2.mp4", true);
     boardID = ID_TD2;
     fadeRight = false;
     fadeDown = true;
 #elif TD3 
-    string videoPath = ofToDataPath("./bunny3.mp4", true);
+    string videoPath = ofToDataPath("./obunny3.mp4", true);
     boardID = ID_TD3;
     fadeRight = true;
     fadeDown = false;
 #elif TD4 
-    string videoPath = ofToDataPath("./bunny4.mp4", true);
+    string videoPath = ofToDataPath("./obunny4.mp4", true);
     boardID = ID_TD4;
     fadeRight = false;
     fadeDown = false;
 #else 
-    string videoPath = ofToDataPath("./bunny1.mp4", true);
+    string videoPath = ofToDataPath("./obunny1.mp4", true);
     boardID = ID_TD1;
     fadeRight = true;
     fadeDown = false;
