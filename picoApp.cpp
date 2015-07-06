@@ -41,6 +41,8 @@ void picoApp::setup()
     
 #ifdef DEBUG_HOMOGRAPHY
 videoPath = ofToDataPath("./testpattern.mp4", true);
+#else
+videoPath = ofToDataPath("./testvideo.mp4", true);
 #endif    
     
     getHomography(boardID);
