@@ -18,8 +18,11 @@ int main(int argc, char *argv[])
     /* for res1280x960 measuring ofSetupOpenGL(1280, 960, OF_WINDOW); */
     /* change when measure the HDMI 720p output mode 
      * ofSetupOpenGL(1280, 720, OF_WINDOW); */
-    // ofSetupOpenGL(640, 480, OF_WINDOW);
+#if DEBUG_HOMOGRAPHY
+    ofSetupOpenGL(640, 480, OF_WINDOW);
+#else
     ofSetupOpenGL(640, 360, OF_WINDOW);
+#endif
 	ofRunApp( new picoApp());
         
 }
