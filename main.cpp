@@ -14,10 +14,12 @@ int main(int argc, char *argv[])
 	// ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetLogLevel(OF_LOG_WARNING);
 	//ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
-	// ofSetupOpenGL(1280, 720, OF_WINDOW);
-    ofSetupOpenGL(640, 480, OF_WINDOW);
-    
-    // ofSetupOpenGL(640, 360, OF_WINDOW);
+	
+    /* for res1280x960 measuring ofSetupOpenGL(1280, 960, OF_WINDOW); */
+    /* change when measure the HDMI 720p output mode 
+     * ofSetupOpenGL(1280, 720, OF_WINDOW); */
+    // ofSetupOpenGL(640, 480, OF_WINDOW);
+    ofSetupOpenGL(640, 360, OF_WINDOW);
 	ofRunApp( new picoApp());
         
 }

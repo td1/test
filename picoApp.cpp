@@ -110,7 +110,7 @@ videoPath = ofToDataPath("./testvideo.mp4", true);
     height = omxPlayer.getHeight();
     printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
     if (width != WIDTH || height != HEIGHT) {
-        printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
+        printf("change to use width=%d, height=%d instead default values\n", width, height);
     }
     
 }
@@ -151,9 +151,9 @@ void picoApp::draw(){
     // calculate fading factors
     // if ((boardID % 2) == 0) { // boardID = 2,4
     if (fadeRight == false) { // boardID = 2,4
-        for (i=0; i<HEIGHT; i++) {             
+        for (i=0; i<height; i++) {             
             for (j=0; j<xOverlapRight[i]; j++) {    
-                var1 = (i*WIDTH + j)*nChannels;
+                var1 = (i*width + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*xfadeMat[i][j];
                     pixels[var1+k] = var2/256; 
@@ -162,9 +162,9 @@ void picoApp::draw(){
         }
     }
     else {
-        for (i=0; i<HEIGHT; i++) {             
-            for (j=xOverlapLeft[i]; j<WIDTH; j++) {    
-                var1 = (i*WIDTH + j)*nChannels;
+        for (i=0; i<height; i++) {             
+            for (j=xOverlapLeft[i]; j<width; j++) {    
+                var1 = (i*width + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*xfadeMat[i][j];
                     pixels[var1+k] = var2/256; 
@@ -175,9 +175,9 @@ void picoApp::draw(){
     
     // vertical blending
     if (fadeDown == true) { // boardID = 1,2
-        for (j=0; j<WIDTH; j++) {    
-            for (i=yOverlapTop[j]; i<HEIGHT; i++) {             
-                var1 = (i*WIDTH + j)*nChannels;
+        for (j=0; j<width; j++) {    
+            for (i=yOverlapTop[j]; i<height; i++) {             
+                var1 = (i*width + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*yfadeMat[i][j];
                     pixels[var1+k] = var2/256; 
@@ -186,9 +186,9 @@ void picoApp::draw(){
         }
     }
     else { // boardID = 3,4
-        for (j=0; j<WIDTH; j++) {    
+        for (j=0; j<width; j++) {    
             for (i=0; i<yOverlapBottom[j]; i++) {             
-                var1 = (i*WIDTH + j)*nChannels;
+                var1 = (i*width + j)*nChannels;
                 for (k=0; k<3; k++) {
                     var2 = pixels[var1+k]*yfadeMat[i][j];
                     pixels[var1+k] = var2/256; 
@@ -411,8 +411,8 @@ int picoApp::getRightX(int y)
     // xOverlapRight[y] = (y-htry)/(rightSlope)+htrx;
     xOverlapRight[y] = (y-htry)*(rightSlopeInv)+htrx;
     // printf("getRightX: %d\n", xOverlapRight[y]);
-    if(xOverlapRight[y] > WIDTH-1) 
-	xOverlapRight[y] = WIDTH-1; 
+    if(xOverlapRight[y] > width-1) 
+	xOverlapRight[y] = width-1; 
     return xOverlapRight[y];
 } 
 
@@ -438,8 +438,8 @@ int picoApp::getTopY(int x)
 int picoApp::getBottomY(int x)
 {
     yOverlapBottom[x] = bottomSlope*(x-vbrx)+vbry;
-    if(yOverlapBottom[x] > HEIGHT-1)
-	yOverlapBottom[x] = HEIGHT-1;
+    if(yOverlapBottom[x] > height-1)
+	yOverlapBottom[x] = height-1;
     return yOverlapBottom[x];
 }
 
@@ -2925,14 +2925,14 @@ void picoApp::calFading(void)
     int i,j,k,x,y;
     double w,xfade,yfade;
 
-    for (i=0; i<HEIGHT; i++) {             
-        for (j=0; j<WIDTH; j++) {    
+    for (i=0; i<height; i++) {             
+        for (j=0; j<width; j++) {    
             w = matrix[2][0] * j + matrix[2][1] * i + matrix[2][2];
             x = (int)((matrix[0][0] * j + matrix[0][1] * i + matrix[0][2])/w);
             y = (int)((matrix[1][0] * j + matrix[1][1] * i + matrix[1][2])/w);
             // printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
 
-            if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT) {
+            if (x >= 0 && x < width && y > 0 && y < height) {
                 if (j >= getLeftX(i) && j <= getRightX(i)) {
                     xfade = getXFade(j,i);
                     if (xfade < 1) 
