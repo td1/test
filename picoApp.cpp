@@ -2829,16 +2829,20 @@ int picoApp::syncVideo(int BoardID)
             newtime2wait = MAX_FRAMES - loopNum;
             printf("time2wait = %d\n", newtime2wait);
         }
+
+        numBars++;
+        loopNum++;
         
         /* STEP4: continue sending out event sync = 1 */
         if (sync == 1) {
             newtime2wait = MAX_FRAMES - loopNum;
             printf("time2wait = %d\n", newtime2wait);
+#if 1 /* should freeze to update the frame number */
+            prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
+            continue;
+#endif
         }
         
-        numBars++;
-        loopNum++;
-
         // clear screen
         if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!sync)))
         {
