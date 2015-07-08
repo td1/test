@@ -1683,11 +1683,12 @@ FILE *matp;
     offset4[1][1] = offset4[2][2] = offset4[3][3] = 1;
     // offset2[1][3] = -560; // HUNG TEST -640 current setting = 560
 
-#ifdef NO_OFFSET
-    offset2[1][3] = 0; 
-    offset3[2][3] = 0; 
-    offset4[1][3] = 0; 
-    offset4[2][3] = 0; 
+#ifdef OFFSET_16_9
+    offset2[2][3] = 120; 
+    offset2[1][3] = 640; 
+    offset3[2][3] = 480; 
+    offset4[1][3] = 640; 
+    offset4[2][3] = 480; 
 #else
     offset2[1][3] = 640; 
     offset3[2][3] = 480; 
@@ -1868,6 +1869,9 @@ FILE *matp;
         }
     }
     otform2[1][1] = otform2[2][2] = otform2[3][3] = 1;
+#if OFFSET_16_9
+    otform2[2][3] = 120; 
+#endif
     matp = fopen("myblend1.txt", "w");
     if (matp == NULL) {
         exit -1;

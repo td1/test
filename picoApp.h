@@ -27,7 +27,7 @@ extern "C" {
 //#define ENABLE_BLENDING                 1
 #define DEBUG_HOMOGRAPHY                1
 
-//#define NO_OFFSET                       1
+#define OFFSET_16_9                     1
 #define USE_COMMON_HOMOGRAPHY           1
 
 #define ID_TD1              1

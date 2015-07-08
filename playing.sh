@@ -21,14 +21,20 @@ URL_empire4=https://www.youtube.com/watch?v=DMocUiTgTq8
 URL_empire720p=https://www.youtube.com/watch?v=AabHZAw2CmY
 
 URL_testpattern=https://www.youtube.com/watch?v=uLNLm68h8QU
+URL_testpattern_640x360=https://www.youtube.com/watch?v=xrsf1qBDjy8
 
 sudo modprobe bcm2835-v4l2
+rm ./data/testpattern.mp4
+#youtube-dl $URL_testpattern -F
+#youtube-dl $URL_testpattern_640x360 -F
+#youtube-dl $URL_testpattern -o './data/testpattern.mp4'
+youtube-dl $URL_testpattern_640x360 -o './data/testpattern.mp4'
 
-youtube-dl $URL_testpattern -o './data/testvideo.mp4'
 #youtube-dl $URL_obunny1 -o './data/testvideo.mp4'
 #youtube-dl $URL_obunny720p -o './data/testvideo.mp4'
 #youtube-dl $URL_bunny1 -o './data/testvideo.mp4'
 #youtube-dl $URL_bunny720p -o './data/testvideo.mp4'
 #youtube-dl $URL_empire2 -o './data/testvideo.mp4'
 #youtube-dl $URL_empire720p -o './data/testvideo.mp4'
+
 ./hung_pixel_dl $myID

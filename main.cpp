@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     /* change when measure the HDMI 720p output mode 
      * ofSetupOpenGL(1280, 720, OF_WINDOW); */
 #if DEBUG_HOMOGRAPHY
-    ofSetupOpenGL(640, 480, OF_WINDOW);
+    // ofSetupOpenGL(640, 480, OF_WINDOW); testpatttern 640x480
+    ofSetupOpenGL(640, 360, OF_WINDOW); // testpattern 640x360
 #else
     ofSetupOpenGL(640, 360, OF_WINDOW);
 #endif
