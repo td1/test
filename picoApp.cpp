@@ -2833,15 +2833,7 @@ int picoApp::syncVideo(int BoardID)
         numBars++;
         loopNum++;
         
-        /* STEP4: continue sending out event sync = 1 */
-        if (sync == 1) {
-            newtime2wait = MAX_FRAMES - loopNum;
-            printf("time2wait = %d\n", newtime2wait);
-#if 1 /* should freeze to update the frame number */
-            prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
-            continue;
-#endif
-        }
+        
         
         // clear screen
         if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!sync)))
@@ -2862,6 +2854,15 @@ int picoApp::syncVideo(int BoardID)
         /* STEP1: keep sending out QRs,
                   even after sync, until reach MAX_FRAMES */
         if (sync == 0 || (loopNum < MAX_FRAMES)) {
+            /* STEP4: continue sending out event sync = 1 */
+            if (sync == 1) {
+                newtime2wait = MAX_FRAMES - loopNum;
+                printf("time2wait = %d\n", newtime2wait);
+                /* freeze to update the frame number */
+                prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
+                continue;
+            }
+            
             sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
             fp = fopen(fileToOpen, "r");
             fread(video_frame, 1, 640*480*3, fp);
