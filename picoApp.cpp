@@ -2732,7 +2732,7 @@ int picoApp::syncVideo(int BoardID)
     int sync = 0;
     int upperleft_x;
     int numBars = -1;
-    int newtime2wait = 0;
+    int time2wait = 0;
 
     struct fb_var_screeninfo vinfo;
     struct fb_fix_screeninfo finfo;
@@ -2812,28 +2812,26 @@ int picoApp::syncVideo(int BoardID)
 
     while (1)
     {
+        gettimeofday(&tv, NULL);
+        if ((double)tv.tv_sec + (0.000001 * tv.tv_usec) - prevBarTime < barRate)	continue; 
+        
         /* STEP6: done syncVideo, playing video now */
         if (startPlayVideo == true) {
             printf(">>>>>>>>>>>> start play video = %d\n", startPlayVideo);
             break;
         } 
 
-        gettimeofday(&tv, NULL);
-        if ((double)tv.tv_sec + (0.000001 * tv.tv_usec) - prevBarTime < barRate)	continue; 
-
         /* STEP3: done detected QRs, start wait time to sync */
         if (sync == 0 && thdata1.shotAnalyzed)
         {
             sync = 1; 
-            loopNum = MAX_FRAMES - MIN_FRAME_DELAY - thdata1.time2wait; 
-            newtime2wait = MAX_FRAMES - loopNum;
-            printf("time2wait = %d\n", newtime2wait);
+            time2wait = thdata1.time2wait;
+            printf("time2wait = %d\n", time2wait);
         }
 
         numBars++;
         loopNum++;
-        
-        
+        printf("loop%d ", loopNum);
         
         // clear screen
         if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!sync)))
@@ -2854,13 +2852,22 @@ int picoApp::syncVideo(int BoardID)
         /* STEP1: keep sending out QRs,
                   even after sync, until reach MAX_FRAMES */
         if (sync == 0 || (loopNum < MAX_FRAMES)) {
-            /* STEP4: continue sending out event sync = 1 */
+            /* STEP4: skip if time2wait > 0, else continue until loopNumber reaching MAX_FRAMES */
             if (sync == 1) {
-                newtime2wait = MAX_FRAMES - loopNum;
-                printf("time2wait = %d\n", newtime2wait);
-                /* freeze to update the frame number */
-                prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
-                continue;
+                if (time2wait)
+                {
+                    time2wait --;
+                    printf("time2wait = %d\n", time2wait);
+
+                    if (loopNum)
+                        loopNum --;
+                    else
+                        printf("wrong state, loopNumber = %d\n", loopNum);
+                    
+                    /* freeze to update the frame number */
+                    prevBarTime = (double)tv.tv_sec + (0.000001 * tv.tv_usec);
+                    continue;
+                }
             }
             
             sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
@@ -2873,7 +2880,7 @@ int picoApp::syncVideo(int BoardID)
                 for (x=0; x<640; x++) {
                     location =  (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
                                 (y+vinfo.yoffset) * finfo.line_length;
-                    *((unsigned short int*)(fbp + location)) = 0;
+                                *((unsigned short int*)(fbp + location)) = 0;
                 }
             }
 
@@ -2904,7 +2911,7 @@ int picoApp::syncVideo(int BoardID)
         }
         /* STEP5: REACH MAX FRAMES AND sync = 1 => OK to start playing video */ 
         else { // wait=0, sync=1, start playing now                
-            printf("wait=%d, sync=%d, start playing video now...\n", newtime2wait, sync);
+            printf("start playing video now, loopNum=%d, sync=%d\n", loopNum, sync);
             startPlayVideo = true;
         }
 
