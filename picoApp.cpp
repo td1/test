@@ -289,6 +289,7 @@ void picoApp::readMatrix2(char* filename)
         return;
     }
 
+    /* no needed to prevent singularity for topSlope and bottomSlope */
     topSlope = (vtly-vtry)/(vtlx-vtrx);
     // topSlope = 0.0;
     bottomSlope = (vbly-vbry)/(vblx-vbrx);
@@ -410,9 +411,9 @@ int picoApp::getRightX(int y)
 {
     // xOverlapRight[y] = (y-htry)/(rightSlope)+htrx;
     xOverlapRight[y] = (y-htry)*(rightSlopeInv)+htrx;
-    // printf("getRightX: %d\n", xOverlapRight[y]);
-    if(xOverlapRight[y] > width-1) 
-	xOverlapRight[y] = width-1; 
+    // printf("xR[%d]=%f \n", y, xOverlapRight[y]);
+    if(xOverlapRight[y] > WIDTH-1) 
+        xOverlapRight[y] = WIDTH-1; 
     return xOverlapRight[y];
 } 
 
@@ -421,25 +422,27 @@ int picoApp::getLeftX(int y)
     // xOverlapLeft[y] = (y-htly)/(leftSlope)+htlx;
     xOverlapLeft[y] = (y-htly)*(leftSlopeInv)+htlx;
     
-    // printf("getLeftX: %d\n", xOverlapLeft[y]);
+    // printf("xL[%d]=%f \n", y, xOverlapLeft[y]);
     if(xOverlapLeft[y] < 0)
-	xOverlapLeft[y] = 0;
+        xOverlapLeft[y] = 0;
     return xOverlapLeft[y];
 }
 
 int picoApp::getTopY(int x)
 {
     yOverlapTop[x] = topSlope*(x-vtrx)+vtry;
+    // printf("yT[%d]=%f \n", x, yOverlapTop[x]);
     if(yOverlapTop[x] < 0)
-	yOverlapTop[x] = 0;
+        yOverlapTop[x] = 0;
     return yOverlapTop[x];
 }
 
 int picoApp::getBottomY(int x)
 {
     yOverlapBottom[x] = bottomSlope*(x-vbrx)+vbry;
-    if(yOverlapBottom[x] > height-1)
-	yOverlapBottom[x] = height-1;
+    // printf("yB[%d]=%f \n", x, yOverlapBottom[x]);
+    if(yOverlapBottom[x] > HEIGHT-1)
+        yOverlapBottom[x] = HEIGHT-1;
     return yOverlapBottom[x];
 }
 
@@ -2951,23 +2954,29 @@ int picoApp::syncVideo(int BoardID)
 void picoApp::calFading(void)
 {
     int i,j,k,x,y;
-    double w,xfade,yfade;
+    double w;
+    double xfade = 1.0;
+    double yfade = 1.0;
 
-    for (i=0; i<height; i++) {             
-        for (j=0; j<width; j++) {    
+    /* note: since the video has not been loaded yet, the width=height=0 so we 
+       try to use the default resolution 640x480 for this calculation */
+    printf("calculation fading at setup time with default resolution %dx%d \n", WIDTH, HEIGHT);
+
+    for (i=0; i<HEIGHT; i++) {             
+        for (j=0; j<WIDTH; j++) {    
             w = matrix[2][0] * j + matrix[2][1] * i + matrix[2][2];
             x = (int)((matrix[0][0] * j + matrix[0][1] * i + matrix[0][2])/w);
             y = (int)((matrix[1][0] * j + matrix[1][1] * i + matrix[1][2])/w);
             // printf(" p[%d %d]=%d %d d% ",i,j,x,y,w);
 
-            if (x >= 0 && x < width && y > 0 && y < height) {
+            if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT) {
                 if (j >= getLeftX(i) && j <= getRightX(i)) {
                     xfade = getXFade(j,i);
                     if (xfade < 1) 
                         xfadeMat[i][j] = xfade*256;
                     else
                         xfadeMat[i][j] = 255;
-                    // printf("xfadeMat[%d %d]=%d", i,j,xfadeMat[i][j]);
+                    // printf("xfadeMat[%d %d]=%d ", i,j,xfadeMat[i][j]);
                 }
                 
                 if (i >= getTopY(j) && i <= getBottomY(j)) {
@@ -2976,7 +2985,7 @@ void picoApp::calFading(void)
                         yfadeMat[i][j] = yfade*256;
                     else
                         yfadeMat[i][j] = 255;
-                    // printf("%d %d = %lf %d   ", i, j, yfade, yfadeMat[i][j]);
+                    // printf("yfadeMat[%d %d]=%d ", i, j, yfadeMat[i][j]);
                 }
             }
         }
