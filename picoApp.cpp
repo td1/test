@@ -2752,8 +2752,8 @@ int picoApp::syncVideo(int BoardID)
     unsigned char *pixel_ptr;
     
     /* change rate from 0.2 to 0.3 */
-    barRate = 1;
-    framePeriod = 1;
+    barRate = 0.2;
+    framePeriod = 0.2;
 
     pthread_t thread1;
     thread_data thdata1; // instantiate passing thread data
@@ -2831,7 +2831,7 @@ int picoApp::syncVideo(int BoardID)
 
         numBars++;
         loopNum++;
-        printf("loop%d ", loopNum);
+        // printf("loop%d ", loopNum);
         
         // clear screen
         if ((loopNum == 1) || ((numBars == MAX_FRAMES) && (!sync)))
