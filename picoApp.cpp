@@ -1690,10 +1690,10 @@ FILE *matp;
     offset4[1][3] = 640; 
     offset4[2][3] = 360; // 480 test offset 
 #else
-    offset2[1][3] = 640; 
-    offset3[2][3] = 480; 
-    offset4[1][3] = 640; 
-    offset4[2][3] = 480; 
+    offset2[1][3] = 620; // reduced by 20 to fit with overlapped image 640; 
+    offset3[2][3] = 460; // reduced by 20 to fit with overlapped image 480; 
+    offset4[1][3] = 620; 
+    offset4[2][3] = 460; 
 #endif
     
 #if 0
@@ -2018,7 +2018,8 @@ FILE *matp;
     }
     /* hbl */
     printf("\nset1 hbl = ");
-    offset5[2] = 480; offset5[1] = 1;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image 
+    offset5[1] = 1;
     for (i=1; i<3; i++) {
         hbl[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2037,7 +2038,8 @@ FILE *matp;
     }
     /* htr */
     printf("\nset1 htr = ");
-    offset5[2] = 1; offset5[1] = 640;
+    offset5[2] = 1; 
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 640;
     for (i=1; i<3; i++) {
         htr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2056,7 +2058,8 @@ FILE *matp;
     }
     /* hbr */
     printf("\nset1 hbr = ");
-    offset5[2] = 480; offset5[1] = 640;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image  
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 
     for (i=1; i<3; i++) {
         hbr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2133,7 +2136,8 @@ FILE *matp;
         }
     }
     /* hbl */
-    offset5[2] = 480; offset5[1] = 1;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image 480; 
+    offset5[1] = 1;
     for (i=1; i<3; i++) {
         hbl[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2148,7 +2152,8 @@ FILE *matp;
         }
     }
     /* htr */
-    offset5[2] = 1; offset5[1] = 640;
+    offset5[2] = 1; 
+    offset5[1] = 620; // // reduced by 20 to fit with overlapped image 640;
     for (i=1; i<3; i++) {
         htr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2163,7 +2168,8 @@ FILE *matp;
         }
     }
     /* hbr */
-    offset5[2] = 480; offset5[1] = 640;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image 480
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 640;
     for (i=1; i<3; i++) {
         hbr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2236,7 +2242,8 @@ FILE *matp;
         }
     }
     /* hbl */
-    offset5[2] = 480; offset5[1] = 1;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image 480; 
+    offset5[1] = 1;
     for (i=1; i<3; i++) {
         hbl[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2251,7 +2258,8 @@ FILE *matp;
         }
     }
     /* htr */
-    offset5[2] = 1; offset5[1] = 640;
+    offset5[2] = 1; 
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 640;
     for (i=1; i<3; i++) {
         htr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2266,7 +2274,8 @@ FILE *matp;
         }
     }
     /* hbr */
-    offset5[2] = 480; offset5[1] = 640;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image  
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 
     for (i=1; i<3; i++) {
         hbr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2340,7 +2349,8 @@ FILE *matp;
         }
     }
     /* hbl */
-    offset5[2] = 480; offset5[1] = 1;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image 480; 
+    offset5[1] = 1;
     for (i=1; i<3; i++) {
         hbl[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2355,7 +2365,8 @@ FILE *matp;
         }
     }
     /* htr */
-    offset5[2] = 1; offset5[1] = 640;
+    offset5[2] = 1; 
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 640;
     for (i=1; i<3; i++) {
         htr[i] = 0; 
         for (k=1; k<=3; k++) {
@@ -2370,7 +2381,8 @@ FILE *matp;
         }
     }
     /* hbr */
-    offset5[2] = 480; offset5[1] = 640;
+    offset5[2] = 460; // reduced by 20 to fit with overlapped image  
+    offset5[1] = 620; // reduced by 20 to fit with overlapped image 
     for (i=1; i<3; i++) {
         hbr[i] = 0; 
         for (k=1; k<=3; k++) {
