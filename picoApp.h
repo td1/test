@@ -24,7 +24,7 @@ extern "C" {
 
 /* COMPILING SWITCH MODIFICATION */
 #define HOMOGRAPHY_TRANSFORM_ENABLE     1
-#define ENABLE_BLENDING                 1
+//#define ENABLE_BLENDING                 1
 //#define DEBUG_HOMOGRAPHY                1
 
 //#define OFFSET_16_9                     1 /* comment out to support 640x480 4:3 aspect */
@@ -113,8 +113,8 @@ public:
         double htlx,htly,htrx,htry,hblx,hbly,hbrx,hbry;
         double vtlx,vtly,vtrx,vtry,vblx,vbly,vbrx,vbry;
         double topSlope,bottomSlope,leftSlope,rightSlope,leftSlopeInv,rightSlopeInv;
-        static const int WIDTH = 640;
-        static const int HEIGHT = 480;
+        static const int WIDTH = 640; // 1280; FOR TEST 720p
+        static const int HEIGHT = 480; // 720; FOR TEST 720p 
         int yOverlapTop[WIDTH];
         int yOverlapBottom[WIDTH];
         int xOverlapLeft[HEIGHT];
