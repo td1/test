@@ -51,8 +51,8 @@ extern "C" {
 #define UPPERLEFT_Y         140 // pixels
 #define CAPTURE_RATE        1	// seconds
 
-#define HOVL                620
-#define VOVL                460
+#define HOVL                560
+#define VOVL                240
 
 #define NUMBER_OF_POINTS    8
 #define NROW                16
