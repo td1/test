@@ -25,7 +25,7 @@ extern "C" {
 /* COMPILING SWITCH MODIFICATION */
 #define HOMOGRAPHY_TRANSFORM_ENABLE     1
 #define ENABLE_BLENDING                 1
-#define DEBUG_HOMOGRAPHY                1
+//#define DEBUG_HOMOGRAPHY                1
 
 //#define OFFSET_16_9                     1 /* comment out to support 640x480 4:3 aspect */
 #define USE_COMMON_HOMOGRAPHY           1
@@ -52,7 +52,7 @@ extern "C" {
 #define CAPTURE_RATE        1	// seconds
 
 #define HOVL                600
-#define VOVL                360
+#define VOVL                440
 
 #define NUMBER_OF_POINTS    8
 #define NROW                16
