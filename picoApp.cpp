@@ -464,9 +464,9 @@ double picoApp::getXFade(int x, int y)
     // remove adjustment result = ((x2+0.5*x1)/(x2+x1));
     result = x2/(x2+x1);
 
-    #if 0 // turn on option to do gamma correction
+    #if 1 // turn on option to do gamma correction
     /* add gamma correction */
-    gamma = 2.2;
+    gamma = 3.2;
     result2 = pow(result,1/gamma);
     // printf("getXFade: %lf\n", result2);
     return (result2 >= 0 && result2 <= 1)? result2:1;
@@ -492,20 +492,20 @@ double picoApp::getYFade(int x, int y)
     }
     result = ((y2)/(y2+y1));
 
-#if 0
+#if 1
     /* add gamma correction */
-    gamma = 2.2;
+    gamma = 3.2;
     result2 = pow(result,1/gamma);
 
     // printf("*** getYFade[%d,%d]=%lf %lf\n", x, y, result, result2);	
     if(result > 0 && result <= 1)
     {
-    /*cout << "Pixel: " << x << "," << y << endl;
-    cout << "Top bound: " << getTopY(x) << endl;
-    cout << "Bottom bound: " << getBottomY(x) << endl;
-    cout << "Y1: " << y1 << endl;
-    cout << "Y2: " << y2 << endl;
-    cout << "Factor: " << result << endl;*/
+        /*cout << "Pixel: " << x << "," << y << endl;
+        cout << "Top bound: " << getTopY(x) << endl;
+        cout << "Bottom bound: " << getBottomY(x) << endl;
+        cout << "Y1: " << y1 << endl;
+        cout << "Y2: " << y2 << endl;
+        cout << "Factor: " << result << endl;*/
     }
     return (result >= 0 && result <= 1) ? result2 : 1;
 #else
@@ -2886,6 +2886,11 @@ int picoApp::syncVideo(int BoardID)
             }
             
             sprintf(fileToOpen, "../../video/qrblob/QR%03d.rgb", numBars + thdata1.myID * 100);
+            fp = fopen(fileToOpen, "r");
+            if (fp == NULL) {
+                printf(">>>>> QR file read error, numBars %d, thdata1.myID %d \n", numBars, thdata1.myID);
+                return 0;
+            }
             fp = fopen(fileToOpen, "r");
             fread(video_frame, 1, 640*480*3, fp);
             pixel_ptr = video_frame;

@@ -43,7 +43,7 @@ extern "C" {
 #define WAIT_AFTER_DONE_GET_HOMOGRAPHY  50 // 5 HUNG TEST extended waiting time after done getHomography
 #define MIN_FRAME_DELAY     20
 
-#define MAX_FRAMES          99
+#define MAX_FRAMES          90  // 99
 #define BAR_WIDTH           5	// pixels
 #define BAR_HEIGHT          200	// pixels
 #define BAR_DISTANCE        20	// pixels
