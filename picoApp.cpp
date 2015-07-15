@@ -93,6 +93,14 @@ videoPath = ofToDataPath("./testvideo.mp4", true);
 #if ENABLE_BLENDING
     calFading();
 #endif        
+    
+	omxPlayer.loadMovie(videoPath); 
+	width = omxPlayer.getWidth();
+    height = omxPlayer.getHeight();
+    printf("MOVIE RESOLUTION = %d x %d, DEFAULT = %d x %d\n", width, height, WIDTH, HEIGHT);
+    if (width != WIDTH || height != HEIGHT) {
+        printf("change to use width=%d, height=%d instead default values\n", width, height);
+    }    
         
 #if BYPASS_CAPTURE_SYNC
     printf("\n>>>>> BYPASS CAPTURE SYNC, MYID = %d \n", boardID);
@@ -103,7 +111,7 @@ videoPath = ofToDataPath("./testvideo.mp4", true);
     ofBackground(0,0,0);
 	consoleListener.setup(this);
     ofSetFrameRate(30);
-
+#if 0    
     startPlayVideo = true;
 	omxPlayer.loadMovie(videoPath); 
 	width = omxPlayer.getWidth();
@@ -112,6 +120,7 @@ videoPath = ofToDataPath("./testvideo.mp4", true);
     if (width != WIDTH || height != HEIGHT) {
         printf("change to use width=%d, height=%d instead default values\n", width, height);
     }
+#endif
     
 }
 
@@ -466,7 +475,7 @@ double picoApp::getXFade(int x, int y)
 
     #if 1 // turn on option to do gamma correction
     /* add gamma correction */
-    gamma = 7.0;
+    gamma = 5.5;
     result2 = pow(result,1/gamma);
     // printf("getXFade: %lf\n", result2);
     return (result2 >= 0 && result2 <= 1)? result2:1;
